@@ -46,8 +46,11 @@ function LoginForm({ onLoginSuccess }) {
   const handleSubmitPassword = (e) => {
     e.preventDefault();
 
+    console.log("phone:", phone); // Проверьте вывод
+    console.log("password:", password); // Проверьте вывод
+    
     // Отправляем данные на сервер для проверки
-    fetch('http://a1057091.xsph.ru/login.php', {
+    fetch('http://localhost/php_server/login.php', { //http://a1057091.xsph.ru/login.php
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -156,7 +159,7 @@ function LoginForm({ onLoginSuccess }) {
                 cursor: 'pointer',
                 fontSize: '14px',
                 marginTop: '10px',
-                color: '#007bff'
+                color: '#fff'
               }}
             >
               {showPassword ? 'Скрыть пароль' : 'Показать пароль'}

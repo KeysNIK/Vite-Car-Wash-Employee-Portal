@@ -1,0 +1,20 @@
+/* Общие стили для блоков */
+.block {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .block-title {
+    color: #007bff; /* Цвет заголовка блока */
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  
+  .block-content {
+    color: #000000; /* Цвет текста внутри блока */
+    font-size: 1em;
+  }
+  
