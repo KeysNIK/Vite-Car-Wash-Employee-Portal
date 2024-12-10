@@ -23,27 +23,33 @@ if (!$phone || !$userPassword) {
     exit();
 }
 
+// Информация о бд для подключения
 $servername = "localhost";
 $username = "a1057091_car_wash";
 $password = "Aa1111!!";
 $dbname = "a1057091_car_wash";
 
+// Поделючение
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+// Проверка подключения
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// SQL запрос для сравнения логина и пароля в бд
 $sql = "SELECT * FROM Employees WHERE Login = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $phone);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
+// Проверка полученого результата
+
+if ($result->num_rows > 0) { // Есть ли строки отобраные по условию
     $user = $result->fetch_assoc();
 
-    if (password_verify($userPassword, $user['EmpPassword'])) {
+    if (password_verify($userPassword, $user['EmpPassword'])) { // Проверка пароля по столбику бд с паролем
         echo json_encode(['status' => 'success']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Неверный пароль']);
@@ -52,6 +58,7 @@ if ($result->num_rows > 0) {
     echo json_encode(['status' => 'error', 'message' => 'Пользователь не найден']);
 }
 
+// Закрытие подключения
 $stmt->close();
 $conn->close();
 ?>

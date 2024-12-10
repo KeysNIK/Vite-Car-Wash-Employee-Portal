@@ -50,7 +50,7 @@ function LoginForm({ onLoginSuccess }) {
     console.log("password:", password); // Проверьте вывод
     
     // Отправляем данные на сервер для проверки
-    fetch('http://localhost/php_server/login.php', { //http://a1057091.xsph.ru/login.php
+    fetch('http://a1057091.xsph.ru/login.php', { //     http://a1057091.xsph.ru/login.php       http://localhost/php_server/login.php
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
