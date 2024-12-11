@@ -71,7 +71,11 @@
 }
 
 /* Мобильная версия */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  html {
+    height: 100%;
+  }
+
   .menu-toggle {
     display: block;
     width: 55px;
@@ -98,14 +102,12 @@
   /* Контент на мобильных устройствах */
   .content {
     width: 100%;
-    padding: 20px 50px;
+    padding: 40px 0 0 0;
     box-sizing: border-box;
     text-align: center;
-    height: 100vh;
     display: block;
     margin-left: 0;
     position: relative;
-    z-index: 5;
   }
 
   /* Центрируем блоки в контенте */
@@ -119,14 +121,12 @@
 }
 
 /* Стиль для контента на ПК */
-@media (min-width: 769px) {
+@media (max-width: 769px) {
   .content {
-    width: calc(1000px - 250px);
-    padding: 20px;
+    width: 0;
     box-sizing: border-box;
     background-color: white;
     overflow-y: auto;
-    margin-left: 250px;
     transition: margin-left 0.3s ease;
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import Block1 from '../Block1'; 
+import Employees from '../view/Employees/Employees'; 
 import Block2 from '../Block2';
 import './MainPageCSS.css';
 
@@ -18,8 +18,8 @@ const MainPage = () => {
   };
 
   const renderActiveContent = () => {
-    if (activeContent === 'Block1') {
-      return <Block1 />;
+    if (activeContent === 'Employees') {
+      return <Employees />;
     } else if (activeContent === 'Block2') {
       return <Block2 />;
     } else {
