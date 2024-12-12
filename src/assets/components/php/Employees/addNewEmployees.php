@@ -1,6 +1,6 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
     
 ini_set('display_errors', 1);
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $login = $_POST['login'] ?? null;
 $password = $_POST['password'] ?? null;
-$fio = $_POST['fio'] ?? null;
+$fio = $_POST['fio'] ?? null;ы
 $position = $_POST['position'] ?? null;
 $statusEmployee = $_POST['statusEmployee'] ?? null;
 $accessCode = $_POST['accessCode'] ?? null;

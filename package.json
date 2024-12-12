@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "proxy": "http://a1057091.xsph.ru",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

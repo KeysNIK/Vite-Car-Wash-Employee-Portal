@@ -1,8 +1,9 @@
 import React from 'react';
+import styles from './Sidebar.module.css'; // Подключаем стили для бокового меню
 
 const Sidebar = ({ isMenuOpen, setContent }) => {
   return (
-    <div className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
+    <div className={`${styles.sideMenu} ${isMenuOpen ? styles.open : ''}`}>
       <h1>Алгоритм Чистоты</h1>
       <button onClick={() => setContent('Block2')}>Прием заказа</button>
       <button onClick={() => setContent('Block2')}>Очередь</button>

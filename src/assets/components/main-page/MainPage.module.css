@@ -1,0 +1,22 @@
+/* Главное разделение: меню слева, рабочая область справа */
+.mainPage {
+  display: flex; /* Создаем flex-контейнер для разделения */
+  height: 100vh; /* Высота экрана */
+  overflow: hidden;
+}
+
+/* Рабочая область (основной контент) */
+.content {
+  flex-grow: 1; /* Заполняет оставшееся пространство */
+  padding: 20px;
+  background-color: white;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
+
+/* Мобильная версия */
+@media (max-width: 1024px) {
+  .content {
+    margin-left: 0; /* На мобильных устройствах контент будет занимать всю ширину */
+  }
+}

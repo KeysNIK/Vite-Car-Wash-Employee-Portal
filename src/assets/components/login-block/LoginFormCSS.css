@@ -1,11 +1,4 @@
-/* Основной контейнер приложения */
-#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0;
-    text-align: center;
-    font-family: 'Arial', sans-serif;
-  }
+
   
   h1 {
     margin-block-start: 0;

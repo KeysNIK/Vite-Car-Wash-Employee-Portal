@@ -1,0 +1,46 @@
+/* Боковое меню */
+.sideMenu {
+  width: 250px; /* Фиксированная ширина меню */
+  height: 100%; /* Занимает всю высоту */
+  background-color: #007bff;
+  position: fixed; /* Фиксированное положение слева */
+  left: 0;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+}
+
+.sideMenu h1 {
+  color: #fff;
+  padding: 20px;
+  margin: 0;
+}
+
+/* Кнопки меню */
+.sideMenu button {
+  padding: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sideMenu button:hover {
+  background-color: #0056b3;
+}
+
+/* Мобильная версия */
+@media (max-width: 1024px) {
+  .sideMenu {
+    transform: translateX(-250px); /* Скрыто по умолчанию */
+  }
+
+  .sideMenu.open {
+    transform: translateX(0); /* Меню открывается при добавлении класса .open */
+  }
+}
