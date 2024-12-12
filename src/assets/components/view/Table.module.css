@@ -53,36 +53,48 @@ td button {
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  color: white; /* Убедитесь, что текст всегда белый */
 }
 
 td button.edit {
-  background-color: #28a745; 
-  color: white;
+  background-color: #28a745;  /* Зеленая кнопка для редактирования */
 }
 
 td button.edit:hover {
   background-color: #218838;
   transform: translateY(-2px);
+  box-shadow: 0 0 8px #218837;
 }
 
 td button.delete {
-  background-color: #dc3545;
-  color: white;
+  background-color: #dc3545;  /* Красная кнопка для удаления */
+  margin-left: 10px;
 }
 
 td button.delete:hover {
   background-color: #c82333;
   transform: translateY(-2px);
+  box-shadow: 0 0 8px #c82333;
 }
 
 td button.view {
-  background-color: #007bff;
-  color: white;
+  background-color: #007bff;  /* Синяя кнопка для просмотра */
 }
 
 td button.view:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
+}
+
+.addButton {
+  background-color: #007bff;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.addButton:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 0 8px #0056b3;
 }
 
 /* Responsive Table */

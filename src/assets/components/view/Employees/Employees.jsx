@@ -2,14 +2,24 @@ import React, { useEffect, useState } from "react";
 import modalStyles from "../Modal.module.css";
 import tableStyles from "../Table.module.css"; 
 import paginationStyles from "../Pagination.module.css";
+import modalStylesDelete from "../ModalDelete.module.css";
 
 const Employees = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [isAdding, setIsAdding] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const [editUser, setEditUser] = useState(null);
   const [newUser, setNewUser] = useState({
     login: "",
     password: "",
@@ -24,22 +34,22 @@ const Employees = () => {
 
     setIsLoading(true);
     try {
-      const limit = 15;
-      const response = await fetch(
-        `http://a1057091.xsph.ru/viewEmployees.php?page=${page}&limit=${limit}`
-      );
-      const result = await response.json();
+        const limit = 15;
+        const response = await fetch(
+            `http://a1057091.xsph.ru/Employees.php?page=${page}&limit=${limit}`
+        );
+        const result = await response.json();
 
-      if (result.data.length > 0) {
-        setData(result.data);
-        setTotalPages(result.total_pages);
-      }
+        if (result.data.length > 0) {
+            setData(result.data);
+            setTotalPages(result.total_pages);
+        }
     } catch (error) {
-      console.error("Ошибка загрузки данных:", error);
+        console.error("Ошибка загрузки данных:", error);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
 
   useEffect(() => {
     fetchData();
@@ -51,50 +61,144 @@ const Employees = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const inputPage = Number(e.target.value);
-    if (inputPage >= 1 && inputPage <= totalPages) {
-      setPage(inputPage);
+  const handleDeleteConfirm = async () => {
+    if (userToDelete) {
+      setIsDeleting(true);
+      try {
+        const response = await fetch(`http://a1057091.xsph.ru/Employees.php?id=${userToDelete.ID}`, {
+          method: 'DELETE',
+        });
+  
+        const result = await response.json();
+        if (result.status === 'success') {
+          fetchData();
+          setDeleteModalOpen(false);
+        } else {
+          alert(`Ошибка удаления: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Ошибка удаления пользователя:', error);
+      } finally {
+        setIsDeleting(false);
+      }
     }
   };
+  
 
   const handleAddUser = async (e) => {
     e.preventDefault();
+  
+    setIsAdding(true);
+  
     try {
-      const response = await fetch(
-        `http://a1057091.xsph.ru/addNewEmployees.php`, 
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        }
-      );
-
+      const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'add',
+          login: newUser.login,
+          password: newUser.password,
+          fio: newUser.fio,
+          position: newUser.position,
+          statusEmployee: newUser.statusEmployee,
+          accessCode: newUser.accessCode,
+        }),
+      });
+  
       const result = await response.json();
-      if (result.status === "success") {
-        alert("Пользователь успешно добавлен!");
+  
+      if (result.status === 'success') {
+        fetchData();
         setAddModalOpen(false);
         setNewUser({
-          login: "",
-          password: "",
-          fio: "",
-          position: "",
-          statusEmployee: "",
-          accessCode: "",
+          login: '',
+          password: '',
+          fio: '',
+          position: '',
+          statusEmployee: '',
+          accessCode: '',
         });
-        fetchData();
       } else {
-        alert(`Ошибка: ${result.message}`);
+        alert(`Ошибка добавления: ${result.message}`);
       }
     } catch (error) {
-      console.error("Ошибка добавления пользователя:", error);
+      console.error('Ошибка добавления пользователя:', error);
+    } finally {
+      setIsAdding(false);
     }
   };
 
+  const handleEditUser = async (e) => {
+    e.preventDefault();
+  
+    setIsEditing(true);
+  
+    try {
+      const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'edit',
+          id: editUser.ID,
+          login: editUser.login,
+          password: editUser.password,
+          fio: editUser.fio,
+          position: editUser.position,
+          statusEmployee: editUser.statusEmployee,
+          accessCode: editUser.accessCode,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.status === 'success') {
+        fetchData();
+        setEditModalOpen(false);
+      } else {
+        setIsEditing(false);
+        alert(`Ошибка: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Ошибка обновления пользователя:', error);
+    } finally {
+      setIsEditing(false);
+    }
+  };
+  
+const handleEditClick = (item) => {
+  setEditUser({
+    ID: item.ID,
+    login: item.Login,
+    password: item.Password,
+    fio: item.FIO,
+    position: item.Position,
+    statusEmployee: item.StatusEmployee,
+    accessCode: item.AccessCode,
+  });
+  setEditModalOpen(true);
+};
+
+const handleInputChange = (e) => {
+  const value = e.target.value;
+  if (value >= 1 && value <= totalPages) {
+    setPage(Number(value));
+  }
+};
+
+const handleDeleteClick = (item) => {
+  setUserToDelete(item);
+  setDeleteModalOpen(true);
+};
+
+const handleDeleteCancel = () => {
+  setDeleteModalOpen(false);
+  setUserToDelete(null);
+};
   return (
-    
     <>
     <div className={tableStyles.tableContainer}>
       <table className={tableStyles.table}>
@@ -119,17 +223,16 @@ const Employees = () => {
               <td>{item.StatusEmployee}</td>
               <td>{item.AccessCode}</td>
               <td>
-                <form method="POST" action="">
-                  <button onClick={() => openEditModal(item)} className={tableStyles.button}>Изменить</button>
-                  <button className={`${tableStyles.button}`}>Удалить</button>
-                </form>
+              <button onClick={() => { setEditUser(item); handleEditClick(item); }} className={tableStyles.edit} disabled={isEditing}>Изменить</button>
+              <button onClick={() => handleDeleteClick(item)} className={tableStyles.delete} disabled={isDeleting}>Удалить</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      </div>
+
       <button onClick={() => setAddModalOpen(true)} className={tableStyles.addButton}>Добавить</button>
+      
 
       <div className={paginationStyles.paginationContainer}>
         <div className={paginationStyles.paginationControls}>
@@ -148,8 +251,7 @@ const Employees = () => {
           >
             Следующая
           </button>
-        </div>
-        <div className={paginationStyles.paginationInput}>
+          <div className={paginationStyles.paginationInput}>
           <input
             type="number"
             value={page}
@@ -165,69 +267,152 @@ const Employees = () => {
             Перейти
           </button>
         </div>
+        </div>
+        
+        
       </div>
+    </div>
 
-      {isAddModalOpen && (
-        <div className={modalStyles.modalContainer}>
-          <div className={modalStyles.modal}>
-            <button className={modalStyles.closeModal} onClick={() => setAddModalOpen(false)}>×</button>
-            <h3>Добавить пользователя</h3>
-            <form className={modalStyles.form} onSubmit={handleAddUser}>
-              <input
-                type="text"
-                placeholder="Логин"
-                value={newUser.login}
-                onChange={(e) => setNewUser({ ...newUser, login: e.target.value })}
-                required
-                className={modalStyles.input}
-              />
-              <input
-                type="password"
-                placeholder="Пароль"
-                value={newUser.password}
-                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                required
-                className={modalStyles.input}
-              />
-              <input
-                type="text"
-                placeholder="ФИО"
-                value={newUser.fio}
-                onChange={(e) => setNewUser({ ...newUser, fio: e.target.value })}
-                required
-                className={modalStyles.input}
-              />
-              <input
-                type="text"
-                placeholder="Должность"
-                value={newUser.position}
-                onChange={(e) => setNewUser({ ...newUser, position: e.target.value })}
-                required
-                className={modalStyles.input}
-              />
-              <input
-                type="text"
-                placeholder="Статус сотрудника"
-                value={newUser.statusEmployee}
-                onChange={(e) => setNewUser({ ...newUser, statusEmployee: e.target.value })}
-                required
-                className={modalStyles.input}
-              />
-              <input
-                type="number"
-                placeholder="Код доступа"
-                value={newUser.accessCode}
-                onChange={(e) => setNewUser({ ...newUser, accessCode: e.target.value })}
-                required
-                className={modalStyles.input}
-              />
-              <button type="submit" className={modalStyles.button}>Добавить</button>
-            </form>
+    {isAddModalOpen && (
+  <div className={modalStyles.modalContainer}>
+    <div className={modalStyles.modal}>
+      <button className={modalStyles.closeModal} onClick={() => setAddModalOpen(false)}>&times;</button>
+      <form onSubmit={handleAddUser} className={modalStyles.form}>
+        <h2>Добавить пользователя</h2>
+        <label>Логин:</label>
+        <input
+          type="text"
+          placeholder="+375(__)___-__-__"
+          className={modalStyles.input}
+          value={newUser.login}
+          onChange={(e) => setNewUser({ ...newUser, login: e.target.value })}
+        />
+        <label>Пароль:</label>
+        <input
+          type="password"
+          className={modalStyles.input}
+          value={newUser.password}
+          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+        />
+        <label>ФИО:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={newUser.fio}
+          onChange={(e) => setNewUser({ ...newUser, fio: e.target.value })}
+        />
+        <label>Должность:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={newUser.position}
+          onChange={(e) => setNewUser({ ...newUser, position: e.target.value })}
+        />
+        <label>Статус:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={newUser.statusEmployee}
+          onChange={(e) => setNewUser({ ...newUser, statusEmployee: e.target.value })}
+        />
+        <label>Код доступа:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={newUser.accessCode}
+          onChange={(e) => setNewUser({ ...newUser, accessCode: e.target.value })}
+        />
+        <button type="submit" className={modalStyles.button} disabled={isAdding}>{isAdding ? 'Добавление...' : 'Добавить'}</button>
+
+      </form>
+    </div>
+  </div>
+)}
+
+{isEditModalOpen && (
+  <div className={modalStyles.modalContainer}>
+    <div className={modalStyles.modal}>
+      <button className={modalStyles.closeModal} onClick={() => setEditModalOpen(false)}>&times;</button>
+      <form onSubmit={handleEditUser} className={modalStyles.form}>
+        <h2>Изменить пользователя</h2>
+        
+        <label>Логин:</label>
+        <input
+          type="text"
+          placeholder="+375(__)___-__-__"
+          className={modalStyles.input}
+          value={editUser?.login || ''}
+          onChange={(e) => setEditUser({ ...editUser, login: e.target.value })}
+        />
+        
+        <label>Пароль:</label>
+        <input
+          type="password"
+          className={modalStyles.input}
+          value={editUser?.password || ''}
+          onChange={(e) => setEditUser({ ...editUser, password: e.target.value })}
+        />
+        
+        <label>ФИО:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={editUser?.fio || ''}
+          onChange={(e) => setEditUser({ ...editUser, fio: e.target.value })}
+        />
+        
+        <label>Должность:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={editUser?.position || ''}
+          onChange={(e) => setEditUser({ ...editUser, position: e.target.value })}
+        />
+        
+        <label>Статус:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={editUser?.statusEmployee || ''}
+          onChange={(e) => setEditUser({ ...editUser, statusEmployee: e.target.value })}
+        />
+        
+        <label>Код доступа:</label>
+        <input
+          type="text"
+          className={modalStyles.input}
+          value={editUser?.accessCode || ''}
+          onChange={(e) => setEditUser({ ...editUser, accessCode: e.target.value })}
+        />
+        <button type="submit" className={modalStyles.button} disabled={isEditing}>{isEditing ? 'Изменение...' : 'Изменить'}</button>
+      </form>
+    </div>
+  </div>
+)}
+
+
+      {isDeleteModalOpen && (
+        <div className={modalStylesDelete.modalContainer}>
+          <div className={modalStylesDelete.modal}>
+            <button 
+              className={modalStylesDelete.closeModal} 
+              onClick={handleDeleteCancel}
+            >
+              &times;
+            </button>
+            <div className={modalStylesDelete.modalContent}>
+              <h3>Вы уверены, что хотите удалить этого пользователя?</h3>
+              <div className={modalStylesDelete.modalActions}>
+                <button onClick={handleDeleteCancel} className={modalStylesDelete.cancelButton}>
+                  Отмена
+                </button>
+                <button onClick={handleDeleteConfirm} className={modalStylesDelete.deleteButton} disabled={isDeleting}>{isDeleting ? 'Удаление...' : 'Удалить'}</button>
+              </div>
+            </div>
           </div>
         </div>
       )}
     </>
-    
   );
 };
 
