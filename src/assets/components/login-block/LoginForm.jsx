@@ -16,7 +16,7 @@ function LoginForm({ onLoginSuccess }) {
     if (element) {
       const maskOptions = {
         mask: '+375(00)000-00-00',
-        lazy: false
+        lazy: false,
       };
       const phoneMask = new IMask(element, maskOptions);
 
@@ -45,22 +45,30 @@ function LoginForm({ onLoginSuccess }) {
 
   const handleSubmitPassword = (e) => {
     e.preventDefault();
-
-    console.log("phone:", phone); // Проверьте вывод
-    console.log("password:", password); // Проверьте вывод
-    
-    // Отправляем данные на сервер для проверки
-    fetch('http://a1057091.xsph.ru/login.php', { //     http://a1057091.xsph.ru/login.php       http://localhost/php_server/login.php
+  
+    fetch('http://a1057091.xsph.ru/login.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`
+      body: `phone=${encodeURIComponent(phone)}&password=${encodeURIComponent(password)}`,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with status ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.status === 'success') {
           console.log('Успешный вход');
+          console.log(data.accessCode);
+          // Сохранение куки
+          if (data.accessCode) {
+            document.cookie = `accessCode=${data.accessCode}; path=/`;          
+            console.log('Куки сохранены:', document.cookie);
+          }
+    
           // Уведомляем родительский компонент об успешной аутентификации
           onLoginSuccess();
         } else {
@@ -69,9 +77,12 @@ function LoginForm({ onLoginSuccess }) {
         }
       })
       .catch((error) => {
-        console.error('Ошибка:', error);
+        console.error('Ошибка запроса:', error.message);
+        setErrorMessage('Произошла ошибка при входе. Попробуйте позже.');
       });
+    
   };
+  
 
   const handleKeyPress = (e, action) => {
     if (e.key === 'Enter') {
@@ -90,7 +101,7 @@ function LoginForm({ onLoginSuccess }) {
 
   const nextPage = () => {
     onLoginSuccess();
-  }
+  };
 
   return (
     <>
@@ -128,7 +139,7 @@ function LoginForm({ onLoginSuccess }) {
           <div id="login">
             <input
               id="login-input-password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Введите пароль"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -159,7 +170,7 @@ function LoginForm({ onLoginSuccess }) {
                 cursor: 'pointer',
                 fontSize: '14px',
                 marginTop: '10px',
-                color: '#fff'
+                color: '#fff',
               }}
             >
               {showPassword ? 'Скрыть пароль' : 'Показать пароль'}
@@ -170,5 +181,6 @@ function LoginForm({ onLoginSuccess }) {
     </>
   );
 }
+
 
 export default LoginForm;

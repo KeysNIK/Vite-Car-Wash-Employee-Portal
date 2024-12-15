@@ -1,7 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -41,13 +41,17 @@ if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
 
     if (password_verify($userPassword, $user['EmpPassword'])) {
-        echo json_encode(['status' => 'success']);
+        $accessCode = $user['AccessCode'];
+
+        echo json_encode(['status' => 'success', 'accessCode' => $accessCode]);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Неверный пароль']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Пользователь не найден']);
 }
+
+
 
 $stmt->close();
 $conn->close();

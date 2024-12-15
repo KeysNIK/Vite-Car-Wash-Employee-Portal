@@ -90,6 +90,11 @@ const Employees = () => {
   
     setIsAdding(true);
   
+    // Проверка, чтобы пропустить ошибку, если Код доступа равен 0 или пуст
+    if (newUser.accessCode === '') {
+      newUser.accessCode = '0'; // Устанавливаем 0, если код доступа пустой
+    }
+  
     try {
       const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
         method: 'POST',
@@ -129,11 +134,15 @@ const Employees = () => {
       setIsAdding(false);
     }
   };
-
+  
   const handleEditUser = async (e) => {
     e.preventDefault();
   
     setIsEditing(true);
+  
+    if (editUser.accessCode === '') {
+      editUser.accessCode = '0';
+    }
   
     try {
       const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
@@ -183,9 +192,16 @@ const handleEditClick = (item) => {
 };
 
 const handleInputChange = (e) => {
-  const value = e.target.value;
-  if (value >= 1 && value <= totalPages) {
-    setPage(Number(value));
+  const { name, value } = e.target;
+
+  if (name === 'accessCode' && value === '') {
+    value = '0';
+  }
+
+  if (newUser[name] !== undefined) {
+    setNewUser({ ...newUser, [name]: value });
+  } else if (editUser[name] !== undefined) {
+    setEditUser({ ...editUser, [name]: value });
   }
 };
 

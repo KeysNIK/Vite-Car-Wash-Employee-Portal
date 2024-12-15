@@ -1,7 +1,7 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statusEmployee = $_POST['statusEmployee'] ?? null;
         $accessCode = $_POST['accessCode'] ?? null;
 
-        if (!$login || !$password || !$fio || !$position || !$statusEmployee || !$accessCode) {
+        if (!$login || !$password || !$fio || !$position || !$statusEmployee) {
             echo json_encode(['status' => 'error', 'message' => 'Некоторые поля не указаны']);
             exit();
         }
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $statusEmployee = $_POST['statusEmployee'] ?? null;
         $accessCode = $_POST['accessCode'] ?? null;
 
-        if (!$id || !$login || !$fio || !$position || !$statusEmployee || !$accessCode) {
+        if (!$id || !$login || !$fio || !$position || !$statusEmployee) {
             echo json_encode(['status' => 'error', 'message' => 'Некоторые поля не указаны']);
             exit();
         }
