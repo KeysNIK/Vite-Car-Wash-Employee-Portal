@@ -3,13 +3,15 @@ import modalStyles from "../Modal.module.css";
 import tableStyles from "../Table.module.css"; 
 import paginationStyles from "../Pagination.module.css";
 import modalStylesDelete from "../ModalDelete.module.css";
+import searchStyles from "../Search.module.css";
 
 const Employees = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [noResults, setNoResults] = useState(false); // Новая переменная для отслеживания нет данных
+
   const [isAdding, setIsAdding] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -29,31 +31,45 @@ const Employees = () => {
     accessCode: "",
   });
 
-  const fetchData = async () => {
-    if (isLoading) return;
+  const [search, setSearch] = useState('');
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'asc', // или 'desc'
+  });
+
+  const handleSearchChange = (e) => {
+    let searchValue = e.target.value;
+    searchValue = searchValue.replace(/\+/g, '');
+    setSearch(searchValue);
+    fetchData(searchValue);
+  };
+
+  const fetchData = async (search = '') => {
+    if (isLoading) return;
     setIsLoading(true);
     try {
-        const limit = 15;
-        const response = await fetch(
-            `http://a1057091.xsph.ru/Employees.php?page=${page}&limit=${limit}`
-        );
-        const result = await response.json();
+      const limit = 15;
+      const response = await fetch(
+        `http://a1057091.xsph.ru/Employees.php?page=${page}&limit=${limit}&search=${search}`
+      );
+      const result = await response.json();
 
-        if (result.data.length > 0) {
-            setData(result.data);
-            setTotalPages(result.total_pages);
-        }
+      if (result.data.length > 0) {
+        setData(result.data);
+        setTotalPages(result.total_pages);
+        setNoResults(false);
+      } else {
+        setData([]);
+        setTotalPages(1);
+        setNoResults(true);
+      }
     } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
+      console.error("Ошибка загрузки данных:", error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
-
-  useEffect(() => {
-    fetchData();
-  }, [page]);
+  };
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -68,7 +84,7 @@ const Employees = () => {
         const response = await fetch(`http://a1057091.xsph.ru/Employees.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
-  
+
         const result = await response.json();
         if (result.status === 'success') {
           fetchData();
@@ -83,18 +99,15 @@ const Employees = () => {
       }
     }
   };
-  
 
   const handleAddUser = async (e) => {
     e.preventDefault();
-  
     setIsAdding(true);
-  
-    // Проверка, чтобы пропустить ошибку, если Код доступа равен 0 или пуст
+
     if (newUser.accessCode === '') {
-      newUser.accessCode = '0'; // Устанавливаем 0, если код доступа пустой
+      newUser.accessCode = '0'; 
     }
-  
+
     try {
       const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
         method: 'POST',
@@ -111,9 +124,9 @@ const Employees = () => {
           accessCode: newUser.accessCode,
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (result.status === 'success') {
         fetchData();
         setAddModalOpen(false);
@@ -134,16 +147,15 @@ const Employees = () => {
       setIsAdding(false);
     }
   };
-  
+
   const handleEditUser = async (e) => {
     e.preventDefault();
-  
     setIsEditing(true);
-  
+
     if (editUser.accessCode === '') {
       editUser.accessCode = '0';
     }
-  
+
     try {
       const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
         method: 'POST',
@@ -161,9 +173,9 @@ const Employees = () => {
           accessCode: editUser.accessCode,
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (result.status === 'success') {
         fetchData();
         setEditModalOpen(false);
@@ -177,117 +189,166 @@ const Employees = () => {
       setIsEditing(false);
     }
   };
-  
-const handleEditClick = (item) => {
-  setEditUser({
-    ID: item.ID,
-    login: item.Login,
-    password: item.Password,
-    fio: item.FIO,
-    position: item.Position,
-    statusEmployee: item.StatusEmployee,
-    accessCode: item.AccessCode,
-  });
-  setEditModalOpen(true);
-};
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
+  const handleEditClick = (item) => {
+    setEditUser({
+      ID: item.ID,
+      login: item.Login,
+      password: item.Password,
+      fio: item.FIO,
+      position: item.Position,
+      statusEmployee: item.StatusEmployee,
+      accessCode: item.AccessCode,
+    });
+    setEditModalOpen(true);
+  };
 
-  if (name === 'accessCode' && value === '') {
-    value = '0';
-  }
+  const handleDeleteClick = (item) => {
+    setUserToDelete(item);
+    setDeleteModalOpen(true);
+  };
 
-  if (newUser[name] !== undefined) {
-    setNewUser({ ...newUser, [name]: value });
-  } else if (editUser[name] !== undefined) {
-    setEditUser({ ...editUser, [name]: value });
-  }
-};
+  const handleDeleteCancel = () => {
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
 
-const handleDeleteClick = (item) => {
-  setUserToDelete(item);
-  setDeleteModalOpen(true);
-};
+  const requestSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
 
-const handleDeleteCancel = () => {
-  setDeleteModalOpen(false);
-  setUserToDelete(null);
-};
+    setSortConfig({ key, direction });
+    sortData(key, direction);
+  };
+
+  const sortData = (key, direction) => {
+    const sortedData = [...data].sort((a, b) => {
+      if (a[key] < b[key]) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (a[key] > b[key]) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+    setData(sortedData);
+  };
+
+  const getSortIndicator = (column) => {
+    if (sortConfig.key === column) {
+      return sortConfig.direction === 'asc' ? '↑' : '↓';
+    }
+    return '';
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page]);
+
   return (
     <>
-    <div className={tableStyles.tableContainer}>
-      <table className={tableStyles.table}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Логин</th>
-            <th>ФИО</th>
-            <th>Должность</th>
-            <th>Статус</th>
-            <th>Код доступа</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr key={item.ID}>
-              <td>{item.ID}</td>
-              <td>{item.Login}</td>
-              <td>{item.FIO}</td>
-              <td>{item.Position}</td>
-              <td>{item.StatusEmployee}</td>
-              <td>{item.AccessCode}</td>
-              <td>
-              <button onClick={() => { setEditUser(item); handleEditClick(item); }} className={tableStyles.edit} disabled={isEditing}>Изменить</button>
-              <button onClick={() => handleDeleteClick(item)} className={tableStyles.delete} disabled={isDeleting}>Удалить</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <button onClick={() => setAddModalOpen(true)} className={tableStyles.addButton}>Добавить</button>
-      
-
-      <div className={paginationStyles.paginationContainer}>
-        <div className={paginationStyles.paginationControls}>
-          <button 
-            onClick={() => handlePageChange(page - 1)} 
-            disabled={page === 1}
-            className={paginationStyles.pageButton}
-          >
-            Предыдущая
-          </button>
-          <span>Страница {page} из {totalPages}</span>
-          <button 
-            onClick={() => handlePageChange(page + 1)} 
-            disabled={page === totalPages}
-            className={paginationStyles.pageButton}
-          >
-            Следующая
-          </button>
-          <div className={paginationStyles.paginationInput}>
+      <div className={tableStyles.tableContainer}>
+        <div className={searchStyles.searchContainer}>
           <input
-            type="number"
-            value={page}
-            min={1}
-            max={totalPages}
-            onChange={handleInputChange}
-            className={paginationStyles.pageInput}
+            type="text"
+            placeholder="Поиск по имени, должности, логину..."
+            value={search}
+            onChange={handleSearchChange}
+            className={searchStyles.searchInput}
           />
-          <button 
-            className={paginationStyles.goButton}
-            onClick={() => handlePageChange(Number(page))}
-          >
-            Перейти
+          <button onClick={fetchData} className={searchStyles.searchButton}>
+            Найти
           </button>
         </div>
+
+        {noResults && (
+          <div className={searchStyles.noResults}>По вашему запросу ничего не найдено.</div>
+        )}
+
+        <table className={tableStyles.table}>
+          <thead>
+            <tr>
+              <th onClick={() => requestSort('ID')}>ID {getSortIndicator('ID')}</th>
+              <th onClick={() => requestSort('Login')}>Логин {getSortIndicator('Login')}</th>
+              <th onClick={() => requestSort('FIO')}>ФИО {getSortIndicator('FIO')}</th>
+              <th onClick={() => requestSort('Position')}>Должность {getSortIndicator('Position')}</th>
+              <th onClick={() => requestSort('StatusEmployee')}>Статус {getSortIndicator('StatusEmployee')}</th>
+              <th onClick={() => requestSort('AccessCode')}>Код доступа {getSortIndicator('AccessCode')}</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.ID}>
+                <td>{item.ID}</td>
+                <td>{item.Login}</td>
+                <td>{item.FIO}</td>
+                <td>{item.Position}</td>
+                <td>{item.StatusEmployee}</td>
+                <td>{item.AccessCode}</td>
+                <td>
+                  <button
+                    onClick={() => handleEditClick(item)}
+                    className={tableStyles.edit}
+                    disabled={isEditing}
+                  >
+                    Изменить
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClick(item)}
+                    className={tableStyles.delete}
+                    disabled={isDeleting}
+                  >
+                    Удалить
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <button onClick={() => setAddModalOpen(true)} className={tableStyles.addButton}>
+          Добавить
+        </button>
+
+        <div className={paginationStyles.paginationContainer}>
+          <div className={paginationStyles.paginationControls}>
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className={paginationStyles.pageButton}
+            >
+              Предыдущая
+            </button>
+            <span>Страница {page} из {totalPages}</span>
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className={paginationStyles.pageButton}
+            >
+              Следующая
+            </button>
+            <div className={paginationStyles.paginationInput}>
+              <input
+                type="number"
+                value={page}
+                min={1}
+                max={totalPages}
+                onChange={(e) => setPage(Number(e.target.value))}
+                className={paginationStyles.pageInput}
+              />
+              <button
+                className={paginationStyles.goButton}
+                onClick={() => handlePageChange(Number(page))}
+              >
+                Перейти
+              </button>
+            </div>
+          </div>
         </div>
-        
-        
       </div>
-    </div>
 
     {isAddModalOpen && (
   <div className={modalStyles.modalContainer}>

@@ -75,13 +75,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $search = $_GET['search'] ?? ''; // Get the search keyword if provided
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
     $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 20;
     $offset = ($page - 1) * $limit;
 
-    $sql = "SELECT * FROM Employees LIMIT ? OFFSET ?";
+    // Modify the SQL query to include a WHERE clause if a search keyword is provided
+    $sql = "SELECT * FROM Employees WHERE 
+                (Login LIKE ? OR FIO LIKE ? OR Position LIKE ? OR StatusEmployee LIKE ? OR AccessCode LIKE ?)
+            LIMIT ? OFFSET ?";
+    
+    $searchTerm = "%$search%";  // Use LIKE to search for the term anywhere in the field
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->bind_param("ssssssi", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
     $stmt->execute();
 
     $result = $stmt->get_result();
@@ -90,8 +96,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data[] = $row;
     }
 
-    $totalResult = $conn->query("SELECT COUNT(*) as count FROM Employees");
-    $totalCount = $totalResult->fetch_assoc()['count'];
+    // Get total count considering search criteria
+    $countSql = "SELECT COUNT(*) as count FROM Employees WHERE 
+                    (Login LIKE ? OR FIO LIKE ? OR Position LIKE ? OR StatusEmployee LIKE ? OR AccessCode LIKE ?)";
+    $countStmt = $conn->prepare($countSql);
+    $countStmt->bind_param("sssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+    $countStmt->execute();
+    $countResult = $countStmt->get_result();
+    $totalCount = $countResult->fetch_assoc()['count'];
 
     $response = [
         "data" => $data,
