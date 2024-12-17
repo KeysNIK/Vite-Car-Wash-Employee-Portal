@@ -20,12 +20,12 @@ th {
   background-color: #007bff;
   color: white;
   font-weight: bold;
-  cursor: pointer; /* Указатель на то, что можно кликать для сортировки */
-  position: relative; /* Для позиционирования стрелки */
+  cursor: pointer;
+  position: relative;
 }
 
 th::after {
-  content: " ▼"; /* Стрелка по умолчанию, указывающая вниз */
+  content: " ▼";
   font-size: 12px;
   color: white;
   position: absolute;
@@ -36,11 +36,11 @@ th::after {
 }
 
 th:hover {
-  background-color: #0056b3; /* Темнее при наведении */
+  background-color: #0056b3;
 }
 
 th:hover::after {
-  color: #e0e0e0; /* Изменить цвет стрелки при наведении */
+  color: #e0e0e0;
 }
 
 td {
@@ -48,24 +48,22 @@ td {
 }
 
 td:hover {
-  background-color: #f9f9f9; /* Подсветка ячеек при наведении */
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* Легкая тень для выделения */
+  background-color: #f9f9f9;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
 }
 
 tr:hover td {
-  background-color: #f1f1f1; /* Подсветка всей строки при наведении на строку */
+  background-color: #f1f1f1;
 }
 
-/* Для отображения стрелки вверх после клика */
 th.sorted-up::after {
-  content: " ▲"; /* Стрелка вверх для сортировки по возрастанию */
+  content: " ▲";
 }
 
 th.sorted-down::after {
-  content: " ▼"; /* Стрелка вниз для сортировки по убыванию */
+  content: " ▼";
 }
 
-/* Button Styling */
 td button {
   padding: 10px 15px;
   border: none;
@@ -73,11 +71,11 @@ td button {
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  color: white; /* Убедитесь, что текст всегда белый */
+  color: white;
 }
 
 td button.edit {
-  background-color: #28a745;  /* Зеленая кнопка для редактирования */
+  background-color: #28a745;
 }
 
 td button.edit:hover {
@@ -87,7 +85,7 @@ td button.edit:hover {
 }
 
 td button.delete {
-  background-color: #dc3545;  /* Красная кнопка для удаления */
+  background-color: #dc3545;
   margin-left: 10px;
 }
 
@@ -98,7 +96,7 @@ td button.delete:hover {
 }
 
 td button.view {
-  background-color: #007bff;  /* Синяя кнопка для просмотра */
+  background-color: #007bff;
 }
 
 td button.view:hover {
@@ -117,7 +115,6 @@ td button.view:hover {
   box-shadow: 0 0 8px #0056b3;
 }
 
-/* Responsive Table */
 @media (max-width: 768px) {
   .tableContainer {
     overflow-x: auto;
@@ -132,7 +129,7 @@ td button.view:hover {
   }
 
   td button {
-    padding: 8px 12px; /* Smaller buttons on mobile */
+    padding: 8px 12px;
   }
 }
 

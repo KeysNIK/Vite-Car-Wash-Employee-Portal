@@ -25,48 +25,45 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? null;
-    if ($action === 'add') {
-        $login = $_POST['login'] ?? null;
-        $password = $_POST['password'] ?? null;
-        $fio = $_POST['fio'] ?? null;
-        $position = $_POST['position'] ?? null;
-        $statusEmployee = $_POST['statusEmployee'] ?? null;
-        $accessCode = $_POST['accessCode'] ?? null;
 
-        if (!$login || !$password || !$fio || !$position || !$statusEmployee) {
+    if ($action === 'add') {
+        $fio = $_POST['fio'] ?? null;
+        $email = $_POST['email'] ?? null;
+        $countVisits = $_POST['countVisits'] ?? null;
+        $clientDiscount = $_POST['clientDiscount'] ?? null;
+
+        if (!$fio || !$email || !$countVisits || !$clientDiscount) {
             echo json_encode(['status' => 'error', 'message' => 'Некоторые поля не указаны']);
             exit();
         }
 
-        $hash_password = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO Employees (`Login`, `EmpPassword`, `FIO`, `Position`, `StatusEmployee`, `AccessCode`) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO Clients (`FIO`, `Email`, `CountVisits`, `ClientDiscount`) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssi", $login, $hash_password, $fio, $position, $statusEmployee, $accessCode);
+        $stmt->bind_param("ssii", $fio, $email, $countVisits, $clientDiscount);
+
         if ($stmt->execute()) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Произошла ошибка при добавлении']);
         }
         $stmt->close();
+
     } elseif ($action === 'edit') {
         $id = $_POST['id'] ?? null;
-        $login = $_POST['login'] ?? null;
-        $password = $_POST['password'] ?? null;
         $fio = $_POST['fio'] ?? null;
-        $position = $_POST['position'] ?? null;
-        $statusEmployee = $_POST['statusEmployee'] ?? null;
-        $accessCode = $_POST['accessCode'] ?? null;
+        $email = $_POST['email'] ?? null;
+        $countVisits = $_POST['countVisits'] ?? null;
+        $clientDiscount = $_POST['clientDiscount'] ?? null;
 
-        if (!$id || !$login || !$fio || !$position || !$statusEmployee) {
+        if (!$fio || !$email || !$countVisits || !$clientDiscount) {
             echo json_encode(['status' => 'error', 'message' => 'Некоторые поля не указаны']);
             exit();
         }
 
-        $hash_password = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "UPDATE Employees SET Login=?, EmpPassword=?, FIO=?, Position=?, StatusEmployee=?, AccessCode=? WHERE ID=?";
+        $sql = "UPDATE Clients SET FIO=?, Email=?, CountVisits=?, ClientDiscount=? WHERE ID=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssi", $login, $hash_password, $fio, $position, $statusEmployee, $accessCode, $id);
+        $stmt->bind_param("ssiii", $fio, $email, $countVisits, $clientDiscount, $id);
+
         if ($stmt->execute()) {
             echo json_encode(['status' => 'success']);
         } else {
@@ -74,19 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->close();
     }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+}
+
+elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $search = $_GET['search'] ?? '';
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 20;
+    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 15;
     $offset = ($page - 1) * $limit;
 
-    $sql = "SELECT * FROM Employees WHERE 
-                (Login LIKE ? OR FIO LIKE ? OR Position LIKE ? OR StatusEmployee LIKE ? OR AccessCode LIKE ?)
-            LIMIT ? OFFSET ?";
-    
+    $sql = "SELECT * FROM Clients WHERE (ID LIKE ? OR FIO LIKE ? OR Email LIKE ? OR CountVisits LIKE ? OR ClientDiscount LIKE ?) LIMIT ? OFFSET ?";
     $searchTerm = "%$search%";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssi", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
+    $stmt->bind_param("issiiii", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $limit, $offset);
     $stmt->execute();
 
     $result = $stmt->get_result();
@@ -95,10 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data[] = $row;
     }
 
-    $countSql = "SELECT COUNT(*) as count FROM Employees WHERE 
-                    (Login LIKE ? OR FIO LIKE ? OR Position LIKE ? OR StatusEmployee LIKE ? OR AccessCode LIKE ?)";
+    $countSql = "SELECT COUNT(*) as count FROM Clients WHERE (FIO LIKE ? OR Email LIKE ? OR CountVisits LIKE ? OR ClientDiscount LIKE ?)";
     $countStmt = $conn->prepare($countSql);
-    $countStmt->bind_param("sssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+    $countStmt->bind_param("ssii", $searchTerm, $searchTerm, $searchTerm, $searchTerm);
     $countStmt->execute();
     $countResult = $countStmt->get_result();
     $totalCount = $countResult->fetch_assoc()['count'];
@@ -109,15 +104,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "total_pages" => ceil($totalCount / $limit),
         "total_count" => $totalCount
     ];
+
     echo json_encode($response);
-} elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+}
+
+elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $id = $_GET['id'] ?? null;
     if (!$id) {
         echo json_encode(['status' => 'error', 'message' => 'ID не указан']);
         exit();
     }
 
-    $sql = "DELETE FROM Employees WHERE ID=?";
+    $sql = "DELETE FROM Clients WHERE ID=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     if ($stmt->execute()) {
