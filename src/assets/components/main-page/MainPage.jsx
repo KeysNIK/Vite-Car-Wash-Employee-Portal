@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Employees from '../view/Employees/Employees'; 
+import Clients from '../view/Clients/Clients.jsx';
+import CarWashServices from '../view/CarWashServices/CarWashServices.jsx';
 import Block2 from '../Block2';
-import Clients from '../view/Clients/Clients.jsx'
 import styles from './MainPage.module.css';
 
 const MainPage = () => {
@@ -34,10 +35,22 @@ const MainPage = () => {
   const renderActiveContent = () => {
     if (activeContent === 'Employees') {
       return <Employees />;
-    } else if (activeContent === 'Block2') {
-      return <Block2 />;
     } else if (activeContent === 'Clients') {
       return <Clients />
+    } else if (activeContent === 'CarWashServices') {
+      return <CarWashServices />
+    } else if (activeContent === '-') {
+
+    } else if (activeContent === '-') {
+
+    } else if (activeContent === '-') {
+
+    } else if (activeContent === '-') {
+
+    } else if (activeContent === '-') {
+
+    } else if (activeContent === 'Block2') {
+      return <Block2 />; 
     } else {
       return <div>Пожалуйста, выберите блок из меню.</div>;
     }

@@ -26,7 +26,7 @@ const Sidebar = ({ isMenuOpen, setContent }) => {
         <>
           <button onClick={() => setContent('Block2')}>История (админ)</button>
           <button onClick={() => setContent('Block2')}>Очередь (админ)</button>
-          <button onClick={() => setContent('Block2')}>Услуги (админ)</button>
+          <button onClick={() => setContent('CarWashServices')}>Услуги (админ)</button>
           <button onClick={() => setContent('Clients')}>Клиенты (админ)</button>
           <button onClick={() => setContent('Employees')}>Работники (админ)</button>
         </>

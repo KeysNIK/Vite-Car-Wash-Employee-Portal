@@ -23,10 +23,9 @@ const Clients = () => {
     
   const [editUser, setEditUser] = useState(null);
   const [newUser, setNewUser] = useState({
-    fio: "",
-    email: "",
-    countVisits: "",
-    clientDiscount: "",
+    servicesName: "",
+    price: "",
+    executionTime: "",
   });
     
   const [search, setSearch] = useState('');
@@ -48,7 +47,7 @@ const Clients = () => {
     try {
       const limit = 15;
       const response = await fetch(
-        `http://a1057091.xsph.ru/Clients.php?page=${page}&limit=${limit}&search=${search}`
+        `http://a1057091.xsph.ru/CarWashServices.php?page=${page}&limit=${limit}&search=${search}`
       );
       const result = await response.json();
    
@@ -78,7 +77,7 @@ const Clients = () => {
     if (userToDelete) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`http://a1057091.xsph.ru/Clients.php?id=${userToDelete.ID}`, {
+        const response = await fetch(`http://a1057091.xsph.ru/CarWashServices.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
     
@@ -102,17 +101,16 @@ const Clients = () => {
     setIsAdding(true);
    
     try {
-      const response = await fetch('http://a1057091.xsph.ru/Clients.php', {
+      const response = await fetch('http://a1057091.xsph.ru/CarWashServices.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         action: 'add',
-        fio: newUser.fio,
-        email: newUser.email,
-        countVisits: newUser.countVisits,
-        clientDiscount: newUser.clientDiscount,
+        servicesName: newUser.servicesName,
+        price: newUser.price,
+        executionTime: newUser.executionTime,
       }),
       
       });
@@ -123,10 +121,9 @@ const Clients = () => {
         fetchData();
         setAddModalOpen(false);
         setNewUser({
-          fio: '',
-          email: '',
-          countVisits: '',
-          clientDiscount: '',
+          servicesName: '',
+          price: '',
+          executionTime: '',
         });
       } else {
         alert(`Ошибка добавления: ${result.message}`);
@@ -145,26 +142,24 @@ const Clients = () => {
     console.log({
         action: 'edit',
         id: editUser.ID,
-        fio: editUser.fio,
-        email: editUser.email,
-        countVisits: editUser.countVisits,
-        clientDiscount: editUser.clientDiscount,
+        servicesName: editUser.servicesName,
+        price: editUser.price,
+        executionTime: editUser.executionTime,
       });
       
 
     try {
-        const response = await fetch('http://a1057091.xsph.ru/Clients.php', {
+        const response = await fetch('http://a1057091.xsph.ru/CarWashServices.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
                 action: 'edit',
-                id: editUser.ID,
-                fio: editUser.fio,
-                email: editUser.email,
-                countVisits: editUser.countVisits,
-                clientDiscount: editUser.clientDiscount,
+                id: editUser.id,
+                servicesName: editUser.servicesName,
+                price: editUser.price,
+                executionTime: editUser.executionTime,
               }),
               
         });
@@ -188,11 +183,10 @@ const Clients = () => {
 
   const handleEditClick = (item) => {
     setEditUser({
-        id: item.ID,
-        fio: item.FIO,
-        email: item.Email,
-        countVisits: item.CountVisits,
-        clientDiscount: item.ClientDiscount,
+      id: item.ID,
+      servicesName: item.ServicesName,
+      price: item.Price,
+      executionTime: item.ExecutionTime,
     });
     setEditModalOpen(true);
 };
@@ -268,10 +262,9 @@ const Clients = () => {
           <thead>
             <tr>
               <th onClick={() => requestSort('ID')}>ID {getSortIndicator('ID')}</th>
-              <th onClick={() => requestSort('FIO')}>ФИО {getSortIndicator('FIO')}</th>
-              <th onClick={() => requestSort('Email')}>Email {getSortIndicator('Email')}</th>
-              <th onClick={() => requestSort('CountVisits')}>Количество посещений {getSortIndicator('CountVisits')}</th>
-              <th onClick={() => requestSort('ClientDiscount')}>Скидка клиента {getSortIndicator('ClientDiscount')}</th>
+              <th onClick={() => requestSort('ServicesName')}>Название {getSortIndicator('ServicesName')}</th>
+              <th onClick={() => requestSort('Price')}>Цена BYN {getSortIndicator('Price')}</th>
+              <th onClick={() => requestSort('ExecutionTime')}>Время выполнения Мин {getSortIndicator('ExecutionTime')}</th>
               <th>Действия</th>
             </tr>
           </thead>
@@ -279,10 +272,9 @@ const Clients = () => {
             {data.map((item) => (
               <tr key={item.ID}>
                 <td>{item.ID}</td>
-                <td>{item.FIO}</td>
-                <td>{item.Email}</td>
-                <td>{item.CountVisits}</td>
-                <td>{item.ClientDiscount}</td>
+                <td>{item.ServicesName}</td>
+                <td>{item.Price}</td>
+                <td>{item.ExecutionTime}</td>
                 <td>
                   <button
                     onClick={() => handleEditClick(item)}
@@ -350,37 +342,29 @@ const Clients = () => {
           <div className={modalStyles.modal}>
             <button className={modalStyles.closeModal} onClick={() => setAddModalOpen(false)}>&times;</button>
             <form onSubmit={handleAddUser} className={modalStyles.form}>
-              <h2>Добавить клиента</h2>
-              <label>ФИО:</label>
+              <h2>Добавить услугу</h2>
+              <label>Название услуги:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={newUser.fio}
-                onChange={(e) => setNewUser({ ...newUser, fio: e.target.value })}
+                value={newUser.servicesName}
+                onChange={(e) => setNewUser({ ...newUser, servicesName: e.target.value })}
               />
 
-              <label>Почта:</label>
+              <label>Цена услуги BYN:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={newUser.email}
-                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                value={newUser.price}
+                onChange={(e) => setNewUser({ ...newUser, price: e.target.value })}
               />
 
-              <label>Количество посещений:</label>
+              <label>Время выполнения услуги Мин:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={newUser.countVisits}
-                onChange={(e) => setNewUser({ ...newUser, countVisits: e.target.value })}
-              />
-
-              <label>Скидка клиента:</label>
-              <input
-                type="text"
-                className={modalStyles.input}
-                value={newUser.clientDiscount}
-                onChange={(e) => setNewUser({ ...newUser, clientDiscount: e.target.value })}
+                value={newUser.executionTime}
+                onChange={(e) => setNewUser({ ...newUser, executionTime: e.target.value })}
               />
 
               <button type="submit" className={modalStyles.button} disabled={isAdding}>{isAdding ? 'Добавление...' : 'Добавить'}</button>
@@ -394,38 +378,30 @@ const Clients = () => {
           <div className={modalStyles.modal}>
             <button className={modalStyles.closeModal} onClick={() => setEditModalOpen(false)}>&times;</button>
             <form onSubmit={handleEditUser} className={modalStyles.form}>
-              <h2>Изменить клиента</h2>
+              <h2>Изменить услугу</h2>
               
-              <label>ФИО:</label>
+              <label>Название услуги:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={editUser?.fio || ''}
-                onChange={(e) => setEditUser({ ...editUser, fio: e.target.value })}
+                value={editUser?.servicesName || ''}
+                onChange={(e) => setEditUser({ ...editUser, servicesName: e.target.value })}
               />
               
-              <label>Почта:</label>
+              <label>Цена услуги BYN:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={editUser?.email || ''}
-                onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
+                value={editUser?.price || ''}
+                onChange={(e) => setEditUser({ ...editUser, price: e.target.value })}
               />
               
-              <label>Количество посещений:</label>
+              <label>Время выполнения услуги Мин:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={editUser?.countVisits || ''}
-                onChange={(e) => setEditUser({ ...editUser, countVisits: e.target.value })}
-              />
-              
-              <label>Скидка клиента:</label>
-              <input
-                type="text"
-                className={modalStyles.input}
-                value={editUser?.clientDiscount || ''}
-                onChange={(e) => setEditUser({ ...editUser, clientDiscount: e.target.value })}
+                value={editUser?.executionTime || ''}
+                onChange={(e) => setEditUser({ ...editUser, executionTime: e.target.value })}
               />
 
               <button type="submit" className={modalStyles.button} disabled={isEditing}>{isEditing ? 'Изменение...' : 'Изменить'}</button>

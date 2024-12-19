@@ -253,7 +253,7 @@ const Employees = () => {
         <div className={searchStyles.searchContainer}>
           <input
             type="text"
-            placeholder="Поиск по имени, должности, логину..."
+            placeholder="Поиск..."
             value={search}
             onChange={handleSearchChange}
             className={searchStyles.searchInput}
