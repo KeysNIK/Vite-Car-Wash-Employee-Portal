@@ -1,6 +1,5 @@
-// LoginForm.jsx
 import { useState, useEffect } from 'react';
-import './LoginFormCSS.css';
+import styles from './LoginForm.module.css';
 import IMask from 'imask';
 
 function LoginForm({ onLoginSuccess }) {
@@ -80,9 +79,7 @@ function LoginForm({ onLoginSuccess }) {
         console.error('Ошибка запроса:', error.message);
         setErrorMessage('Произошла ошибка при входе. Попробуйте позже.');
       });
-    
   };
-  
 
   const handleKeyPress = (e, action) => {
     if (e.key === 'Enter') {
@@ -106,81 +103,83 @@ function LoginForm({ onLoginSuccess }) {
   return (
     <>
       <button onClick={nextPage}>Перейти на главную</button>
-      {step === 1 && (
-        <form id="login-form">
-          <div id="logo">
-            <img id="image" src="" alt="Логотип" />
-            <h1 id="name">Алгоритм Чистоты</h1>
-          </div>
-          <div id="login">
-            <input
-              id="login-input"
-              name="login-input"
-              type="text"
-              placeholder="+375(__)___-__-__"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              onKeyDown={(e) => handleKeyPress(e, handleSubmitPhone)}
-            />
-            <button type="button" onClick={handleSubmitPhone} disabled={!isPhoneValid}>
-              Далее
-            </button>
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-          </div>
-        </form>
-      )}
+      <div className={styles.container}>
+        {step === 1 && (
+          <form className={styles.formWrapper}>
+            <div className={styles.logo}>
+              <img className={styles.logoImage} src="" alt="Логотип" />
+              <h1 className={styles.h1}>Алгоритм Чистоты</h1>
+            </div>
+            <div>
+              <input
+                id="login-input"
+                name="login-input"
+                type="text"
+                placeholder="+375(__)___-__-__"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                onKeyDown={(e) => handleKeyPress(e, handleSubmitPhone)}
+                className={styles.inputField}
+              />
+              <button
+                type="button"
+                onClick={handleSubmitPhone}
+                disabled={!isPhoneValid}
+                className={styles.button}
+              >
+                Далее
+              </button>
+              {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+            </div>
+          </form>
+        )}
 
-      {step === 2 && (
-        <form id="login-form">
-          <div id="logo">
-            <img id="image" src="" alt="Логотип" />
-            <h1 id="name">Алгоритм Чистоты</h1>
-          </div>
-          <div id="login">
-            <input
-              id="login-input-password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Введите пароль"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => handleKeyPress(e, handleSubmitPassword)}
-            />
-            <button
-              type="button"
-              onClick={handleSubmitPassword}
-              disabled={!password}
-            >
-              Далее
-            </button>
+        {step === 2 && (
+          <form className={styles.formWrapper}>
+            <div className={styles.logo}>
+              <img className={styles.logoImage} src="" alt="Логотип" />
+              <h1 className={styles.h1}>Алгоритм Чистоты</h1>
+            </div>
+            <div>
+              <input
+                id="login-input-password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Введите пароль"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => handleKeyPress(e, handleSubmitPassword)}
+                className={styles.inputField}
+              />
+              <button
+                type="button"
+                onClick={handleSubmitPassword}
+                disabled={!password}
+                className={styles.button}
+              >
+                Далее
+              </button>
 
-            <button
-              type="button"
-              onClick={handleReturnToPhone}
-              style={{ marginTop: '10px', backgroundColor: '#ccc' }}
-            >
-              Вернуться к номеру
-            </button>
+              <button
+                type="button"
+                onClick={handleReturnToPhone}
+                className={`${styles.button} ${styles.backButton}`}
+              >
+                Вернуться к номеру
+              </button>
 
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '14px',
-                marginTop: '10px',
-                color: '#fff',
-              }}
-            >
-              {showPassword ? 'Скрыть пароль' : 'Показать пароль'}
-            </button>
-          </div>
-        </form>
-      )}
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className={styles.passwordVisibilityButton}
+              >
+                {showPassword ? 'Скрыть пароль' : 'Показать пароль'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </>
   );
 }
-
 
 export default LoginForm;

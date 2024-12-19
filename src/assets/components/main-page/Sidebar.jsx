@@ -20,11 +20,11 @@ const Sidebar = ({ isMenuOpen, setContent }) => {
       
       <button onClick={() => setContent('Block2')}>Прием заказа</button>
       <button onClick={() => setContent('Block2')}>Очередь</button>
-      <button onClick={() => setContent('Block2')}>История</button>
+      <button onClick={() => setContent('CarHistoryView')}>История</button>
 
       {userRole === '1' && (
         <>
-          <button onClick={() => setContent('Block2')}>История (админ)</button>
+          <button onClick={() => setContent('CarHistory')}>История (админ)</button>
           <button onClick={() => setContent('Block2')}>Очередь (админ)</button>
           <button onClick={() => setContent('CarWashServices')}>Услуги (админ)</button>
           <button onClick={() => setContent('Clients')}>Клиенты (админ)</button>

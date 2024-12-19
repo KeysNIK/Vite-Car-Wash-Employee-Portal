@@ -270,7 +270,6 @@ const Employees = () => {
         <table className={tableStyles.table}>
           <thead>
             <tr>
-              <th onClick={() => requestSort('ID')}>ID {getSortIndicator('ID')}</th>
               <th onClick={() => requestSort('Login')}>Логин {getSortIndicator('Login')}</th>
               <th onClick={() => requestSort('FIO')}>ФИО {getSortIndicator('FIO')}</th>
               <th onClick={() => requestSort('Position')}>Должность {getSortIndicator('Position')}</th>
@@ -282,7 +281,6 @@ const Employees = () => {
           <tbody>
             {data.map((item) => (
               <tr key={item.ID}>
-                <td>{item.ID}</td>
                 <td>{item.Login}</td>
                 <td>{item.FIO}</td>
                 <td>{item.Position}</td>

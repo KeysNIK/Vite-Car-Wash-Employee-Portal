@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Произошла ошибка при редактировании']);
         }
+        
         $stmt->close();
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {

@@ -5,7 +5,7 @@ import paginationStyles from "../Pagination.module.css";
 import modalStylesDelete from "../ModalDelete.module.css";
 import searchStyles from "../Search.module.css";
 
-const Clients = () => {
+const CarHistory = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -23,9 +23,14 @@ const Clients = () => {
     
   const [editUser, setEditUser] = useState(null);
   const [newUser, setNewUser] = useState({
-    servicesName: "",
+    numberCar: "",
+    carBrand: "",
+    carModel: "",
+    carColor: "",
+    clientsID: "",
+    acceptanceDate: "",
+    services: "",
     price: "",
-    executionTime: "",
   });
     
   const [search, setSearch] = useState('');
@@ -47,7 +52,7 @@ const Clients = () => {
     try {
       const limit = 15;
       const response = await fetch(
-        `http://a1057091.xsph.ru/CarWashServices.php?page=${page}&limit=${limit}&search=${search}`
+        `http://a1057091.xsph.ru/CarHistory.php?page=${page}&limit=${limit}&search=${search}`
       );
       const result = await response.json();
    
@@ -77,7 +82,7 @@ const Clients = () => {
     if (userToDelete) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`http://a1057091.xsph.ru/CarWashServices.php?id=${userToDelete.ID}`, {
+        const response = await fetch(`http://a1057091.xsph.ru/CarHistory.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
     
@@ -101,16 +106,21 @@ const Clients = () => {
     setIsAdding(true);
    
     try {
-      const response = await fetch('http://a1057091.xsph.ru/CarWashServices.php', {
+      const response = await fetch('http://a1057091.xsph.ru/CarHistory.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         action: 'add',
-        servicesName: newUser.servicesName,
+        numberCar: newUser.numberCar,
+        carBrand: newUser.carBrand,
+        carModel: newUser.carModel,
+        carColor: newUser.carColor,
+        clientsID: newUser.clientsID,
+        acceptanceDate: newUser.acceptanceDate,
+        services: newUser.services,
         price: newUser.price,
-        executionTime: newUser.executionTime,
       }),
       
       });
@@ -121,9 +131,14 @@ const Clients = () => {
         fetchData();
         setAddModalOpen(false);
         setNewUser({
-          servicesName: '',
+          numberCar: '',
+          carBrand: '',
+          carModel: '',
+          carColor: '',
+          clientsID: '',
+          acceptanceDate: '',
+          services: '',
           price: '',
-          executionTime: '',
         });
       } else {
         alert(`Ошибка добавления: ${result.message}`);
@@ -138,50 +153,60 @@ const Clients = () => {
   const handleEditUser = async (e) => {
     e.preventDefault();
     setIsEditing(true);
-      
+    
 
     try {
-        const response = await fetch('http://a1057091.xsph.ru/CarWashServices.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                action: 'edit',
-                id: editUser.id,
-                servicesName: editUser.servicesName,
-                price: editUser.price,
-                executionTime: editUser.executionTime,
-              }),
+      const response = await fetch('http://a1057091.xsph.ru/CarHistory.php', {
+        method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            action: 'edit',
+            id: editUser.id,
+            numberCar: editUser.numberCar,
+            carBrand: editUser.carBrand,
+            carModel: editUser.carModel,
+            carColor: editUser.carColor,
+            clientsID: editUser.clientsID,
+            acceptanceDate: editUser.acceptanceDate,
+            services: editUser.services,
+            price: editUser.price,
+          }),
               
-        });
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (result.status === 'success') {
-            fetchData();
-            setEditModalOpen(false);
-        } else {
-            setIsEditing(false);
-            alert(`Ошибка: ${result.message}`);
-        }
+      if (result.status === 'success') {
+        fetchData();
+        setEditModalOpen(false);
+      } else {
+        setIsEditing(false);
+        alert(`Ошибка: ${result.message}`);
+      }
     } catch (error) {
         console.error('Ошибка обновления пользователя:', error);
     } finally {
         setIsEditing(false);
     }
-};
+  };
 
 
   const handleEditClick = (item) => {
     setEditUser({
-      id: item.ID,
-      servicesName: item.ServicesName,
-      price: item.Price,
-      executionTime: item.ExecutionTime,
+        id: item.ID,
+        numberCar: item.NumberCar,
+        carBrand: item.CarBrand,
+        carModel: item.CarModel,
+        carColor: item.CarColor,
+        clientsID: item.ClientsID,
+        acceptanceDate: item.AcceptanceDate,
+        services: item.Services,
+        price: item.Price,
     });
     setEditModalOpen(true);
-};
+  };
 
 
   const handleDeleteClick = (item) => {
@@ -253,18 +278,28 @@ const Clients = () => {
         <table className={tableStyles.table}>
           <thead>
             <tr>
-              <th onClick={() => requestSort('ServicesName')}>Название {getSortIndicator('ServicesName')}</th>
-              <th onClick={() => requestSort('Price')}>Цена BYN {getSortIndicator('Price')}</th>
-              <th onClick={() => requestSort('ExecutionTime')}>Время выполнения Мин {getSortIndicator('ExecutionTime')}</th>
+              <th onClick={() => requestSort('NumberCar')}>Номер автомобиля {getSortIndicator('NumberCar')}</th>
+              <th onClick={() => requestSort('CarBrand')}>Марка автомобиля {getSortIndicator('CarBrand')}</th>
+              <th onClick={() => requestSort('CarModel')}>Модель автомобиля {getSortIndicator('Price')}</th>
+              <th onClick={() => requestSort('CarColor')}>Цвет автомобиля {getSortIndicator('CarColor')}</th>
+              <th onClick={() => requestSort('ClientsID')}>ID клиента {getSortIndicator('ClientsID')}</th>
+              <th onClick={() => requestSort('AcceptanceDate')}>Дата приема {getSortIndicator('AcceptanceDate')}</th>
+              <th onClick={() => requestSort('Services')}>Услуги {getSortIndicator('Services')}</th>
+              <th onClick={() => requestSort('Price')}>Цена {getSortIndicator('Price')}</th>
               <th>Действия</th>
             </tr>
           </thead>
           <tbody>
             {data.map((item) => (
               <tr key={item.ID}>
-                <td>{item.ServicesName}</td>
+                <td>{item.NumberCar}</td>
+                <td>{item.CarBrand}</td>
+                <td>{item.CarModel}</td>
+                <td>{item.CarColor}</td>
+                <td>{item.ClientsID}</td>
+                <td>{item.AcceptanceDate}</td>
+                <td>{item.Services}</td>
                 <td>{item.Price}</td>
-                <td>{item.ExecutionTime}</td>
                 <td>
                   <button
                     onClick={() => handleEditClick(item)}
@@ -332,31 +367,70 @@ const Clients = () => {
           <div className={modalStyles.modal}>
             <button className={modalStyles.closeModal} onClick={() => setAddModalOpen(false)}>&times;</button>
             <form onSubmit={handleAddUser} className={modalStyles.form}>
-              <h2>Добавить услугу</h2>
-              <label>Название услуги:</label>
+              <h2>Добавить историю</h2>
+              <label>Номер автомобиля:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={newUser.servicesName}
-                onChange={(e) => setNewUser({ ...newUser, servicesName: e.target.value })}
+                value={newUser.numberCar}
+                onChange={(e) => setNewUser({ ...newUser, numberCar: e.target.value })}
               />
 
-              <label>Цена услуги BYN:</label>
+              <label>Марка автомобиля:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={newUser.carBrand}
+                onChange={(e) => setNewUser({ ...newUser, carBrand: e.target.value })}
+              />
+
+              <label>Модель автомобиля:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={newUser.carModel}
+                onChange={(e) => setNewUser({ ...newUser, carModel: e.target.value })}
+              />
+              
+              <label>Цвет автомобиля:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={newUser.carColor}
+                onChange={(e) => setNewUser({ ...newUser, carColor: e.target.value })}
+              />
+              
+              <label>ID Клиента:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={newUser.clientsID}
+                onChange={(e) => setNewUser({ ...newUser, clientsID: e.target.value })}
+              />
+
+              <label>Дата приема:</label>
+              <input
+                type="date"
+                className={modalStyles.input}
+                value={newUser.acceptanceDate}
+                onChange={(e) => setNewUser({ ...newUser, acceptanceDate: e.target.value })}
+              />
+              
+              <label>Услуги:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={newUser.services}
+                onChange={(e) => setNewUser({ ...newUser, services: e.target.value })}
+              />
+
+              <label>Цена:</label>
               <input
                 type="text"
                 className={modalStyles.input}
                 value={newUser.price}
                 onChange={(e) => setNewUser({ ...newUser, price: e.target.value })}
               />
-
-              <label>Время выполнения услуги Мин:</label>
-              <input
-                type="text"
-                className={modalStyles.input}
-                value={newUser.executionTime}
-                onChange={(e) => setNewUser({ ...newUser, executionTime: e.target.value })}
-              />
-
               <button type="submit" className={modalStyles.button} disabled={isAdding}>{isAdding ? 'Добавление...' : 'Добавить'}</button>
             </form>
           </div>
@@ -368,30 +442,70 @@ const Clients = () => {
           <div className={modalStyles.modal}>
             <button className={modalStyles.closeModal} onClick={() => setEditModalOpen(false)}>&times;</button>
             <form onSubmit={handleEditUser} className={modalStyles.form}>
-              <h2>Изменить услугу</h2>
+              <h2>Изменить историю</h2>
               
-              <label>Название услуги:</label>
+              <label>Номер автомобиля:</label>
               <input
                 type="text"
                 className={modalStyles.input}
-                value={editUser?.servicesName || ''}
-                onChange={(e) => setEditUser({ ...editUser, servicesName: e.target.value })}
+                value={editUser?.numberCar || ''}
+                onChange={(e) => setEditUser({ ...editUser, numberCar: e.target.value })}
+              />
+
+              <label>Марка автомобиля:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={editUser?.carBrand || ''}
+                onChange={(e) => setEditUser({ ...editUser, carBrand: e.target.value })}
+              />
+
+              <label>Модель автомобиля:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={editUser?.carModel || ''}
+                onChange={(e) => setEditUser({ ...editUser, carModel: e.target.value })}
               />
               
-              <label>Цена услуги BYN:</label>
+              <label>Цвет автомобиля:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={editUser?.carColor || ''}
+                onChange={(e) => setEditUser({ ...editUser, carColor: e.target.value })}
+              />
+              
+              <label>ID Клиента:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={editUser?.clientsID || ''}
+                onChange={(e) => setEditUser({ ...editUser, clientsID: e.target.value })}
+              />
+
+              <label>Дата приема:</label>
+              <input
+                type="date"
+                className={modalStyles.input}
+                value={editUser?.acceptanceDate || ''}
+                onChange={(e) => setEditUser({ ...editUser, acceptanceDate: e.target.value })}
+              />
+              
+              <label>Услуги:</label>
+              <input
+                type="text"
+                className={modalStyles.input}
+                value={editUser?.services || ''}
+                onChange={(e) => setEditUser({ ...editUser, services: e.target.value })}
+              />
+
+              <label>Цена:</label>
               <input
                 type="text"
                 className={modalStyles.input}
                 value={editUser?.price || ''}
                 onChange={(e) => setEditUser({ ...editUser, price: e.target.value })}
-              />
-              
-              <label>Время выполнения услуги Мин:</label>
-              <input
-                type="text"
-                className={modalStyles.input}
-                value={editUser?.executionTime || ''}
-                onChange={(e) => setEditUser({ ...editUser, executionTime: e.target.value })}
               />
 
               <button type="submit" className={modalStyles.button} disabled={isEditing}>{isEditing ? 'Изменение...' : 'Изменить'}</button>
@@ -410,7 +524,7 @@ const Clients = () => {
             &times;
             </button>
           <div className={modalStylesDelete.modalContent}>
-            <h3>Вы уверены, что хотите удалить эту услугу?</h3>
+            <h3>Вы уверены, что хотите удалить эту историю?</h3>
               <div className={modalStylesDelete.modalActions}>
                 <button onClick={handleDeleteCancel} className={modalStylesDelete.cancelButton}>
                   Отмена
@@ -425,4 +539,4 @@ const Clients = () => {
   );  
 };
 
-export default Clients;
+export default CarHistory;

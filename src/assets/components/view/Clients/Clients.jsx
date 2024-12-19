@@ -267,7 +267,6 @@ const Clients = () => {
         <table className={tableStyles.table}>
           <thead>
             <tr>
-              <th onClick={() => requestSort('ID')}>ID {getSortIndicator('ID')}</th>
               <th onClick={() => requestSort('FIO')}>ФИО {getSortIndicator('FIO')}</th>
               <th onClick={() => requestSort('Email')}>Email {getSortIndicator('Email')}</th>
               <th onClick={() => requestSort('CountVisits')}>Количество посещений {getSortIndicator('CountVisits')}</th>
@@ -278,7 +277,6 @@ const Clients = () => {
           <tbody>
             {data.map((item) => (
               <tr key={item.ID}>
-                <td>{item.ID}</td>
                 <td>{item.FIO}</td>
                 <td>{item.Email}</td>
                 <td>{item.CountVisits}</td>

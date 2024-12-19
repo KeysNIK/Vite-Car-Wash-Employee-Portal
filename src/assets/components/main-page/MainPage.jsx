@@ -3,6 +3,8 @@ import Sidebar from './Sidebar';
 import Employees from '../view/Employees/Employees'; 
 import Clients from '../view/Clients/Clients.jsx';
 import CarWashServices from '../view/CarWashServices/CarWashServices.jsx';
+import CarHistory from '../view/CarHistory/CarHistory.jsx';
+import CarHistoryView from '../view/CarHistory/CarHistoryView.jsx';
 import Block2 from '../Block2';
 import styles from './MainPage.module.css';
 
@@ -39,10 +41,10 @@ const MainPage = () => {
       return <Clients />
     } else if (activeContent === 'CarWashServices') {
       return <CarWashServices />
-    } else if (activeContent === '-') {
-
-    } else if (activeContent === '-') {
-
+    } else if (activeContent === 'CarHistory') {
+      return <CarHistory />
+    } else if (activeContent === 'CarHistoryView') {
+      return <CarHistoryView />
     } else if (activeContent === '-') {
 
     } else if (activeContent === '-') {
