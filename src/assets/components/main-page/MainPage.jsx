@@ -5,6 +5,8 @@ import Clients from '../view/Clients/Clients.jsx';
 import CarWashServices from '../view/CarWashServices/CarWashServices.jsx';
 import CarHistory from '../view/CarHistory/CarHistory.jsx';
 import CarHistoryView from '../view/CarHistory/CarHistoryView.jsx';
+import CarQueue from '../view/CarQueue/CarQueue.jsx';
+import CarQueueView from '../view/CarQueue/CarQueueView.jsx';
 import Block2 from '../Block2';
 import styles from './MainPage.module.css';
 
@@ -45,10 +47,10 @@ const MainPage = () => {
       return <CarHistory />
     } else if (activeContent === 'CarHistoryView') {
       return <CarHistoryView />
-    } else if (activeContent === '-') {
-
-    } else if (activeContent === '-') {
-
+    } else if (activeContent === 'CarQueue') {
+      return <CarQueue />
+    } else if (activeContent === 'CarQueueView') {
+      return <CarQueueView />
     } else if (activeContent === '-') {
 
     } else if (activeContent === 'Block2') {

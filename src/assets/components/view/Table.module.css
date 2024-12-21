@@ -115,6 +115,10 @@ td button.view:hover {
   box-shadow: 0 0 8px #0056b3;
 }
 
+.accepted td {
+  background-color: #bbffcb;
+}
+
 @media (max-width: 768px) {
   .tableContainer {
     overflow-x: auto;

@@ -19,13 +19,13 @@ const Sidebar = ({ isMenuOpen, setContent }) => {
       <h1>Алгоритм Чистоты</h1>
       
       <button onClick={() => setContent('Block2')}>Прием заказа</button>
-      <button onClick={() => setContent('Block2')}>Очередь</button>
+      <button onClick={() => setContent('CarQueueView')}>Очередь</button>
       <button onClick={() => setContent('CarHistoryView')}>История</button>
 
       {userRole === '1' && (
         <>
           <button onClick={() => setContent('CarHistory')}>История (админ)</button>
-          <button onClick={() => setContent('Block2')}>Очередь (админ)</button>
+          <button onClick={() => setContent('CarQueue')}>Очередь (админ)</button>
           <button onClick={() => setContent('CarWashServices')}>Услуги (админ)</button>
           <button onClick={() => setContent('Clients')}>Клиенты (админ)</button>
           <button onClick={() => setContent('Employees')}>Работники (админ)</button>
