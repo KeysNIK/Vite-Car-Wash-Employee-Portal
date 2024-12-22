@@ -156,81 +156,57 @@ require 'PHPMailer/src/Exception.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-
 function sendEmail($to, $subject, $body) {
     $mail = new PHPMailer(true);
     try {
+        // Настройка SMTP
         $mail->isSMTP();
         $mail->Host = 'smtp.mail.ru';
         $mail->SMTPAuth = true;
-        $mail->Username = 'dolmatovich.nikita@mail.ru';
-        $mail->Password = 'dYSB0W7rC1XN1zqAtL98';
+        $mail->Username = 'dolmatovich.nikita@mail.ru'; // Ваш email
+        $mail->Password = 'dYSB0W7rC1XN1zqAtL98'; // Ваш пароль
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
+        // Настройка отправителя и получателя
         $mail->setFrom('dolmatovich.nikita@mail.ru', 'Автомойка Car Wash');
         $mail->addAddress($to);
 
-        $mail->isHTML(true);
+        // Установка кодировки UTF-8
+        $mail->CharSet = 'UTF-8';
+
+        // Установка темы письма
         $mail->Subject = $subject;
 
-        $body = "
+        // Оформление HTML тела письма
+        $mail->isHTML(true);
+        $mail->Body = "
         <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f9;
-                    margin: 0;
-                    padding: 0;
-                }
-                .container {
-                    width: 100%;
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: #ffffff;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                }
-                h1 {
-                    color: #2a9d8f;
-                    font-size: 24px;
-                }
-                p {
-                    color: #333333;
-                    font-size: 16px;
-                    line-height: 1.5;
-                }
-                .footer {
-                    text-align: center;
-                    font-size: 12px;
-                    color: #888888;
-                    margin-top: 30px;
-                }
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <h1>{$subject}</h1>
-                <p>{$body}</p>
-            </div>
-            <div class='footer'>
-                <p>С уважением, <br>Автомойка Car Wash</p>
-            </div>
+        <body style='font-family: Arial, sans-serif; color: #333;'>
+            <table cellpadding='10' cellspacing='0' width='100%' style='max-width: 600px; margin: auto; background-color: #f9f9f9; border-radius: 8px;'>
+                <tr>
+                    <td style='background-color: #4CAF50; color: #fff; text-align: center; border-radius: 8px 8px 0 0;'>
+                        <h2>{$subject}</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td style='padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px;'>
+                        <p>{$body}</p>
+                    </td>
+                </tr>
+            </table>
         </body>
         </html>";
 
-        $mail->Body = $body;
-
-        $mail->CharSet = 'UTF-8';
-
+        // Отправка письма
         $mail->send();
     } catch (Exception $e) {
         error_log("Email не отправлено: {$mail->ErrorInfo}");
     }
 }
 
+
+// Обработка запросов
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? null;
 
@@ -260,7 +236,7 @@ function handleAccept($conn) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        sendEmail($clientEmail, 'Заказ принят', 'Ваш заказ принят в обработку.');
+        sendEmail($clientEmail, 'Заказ принят', 'Ваш заказ принят в обработку. Мы скоро начнем работу над ним!');
         echo json_encode(['status' => 'success', 'email' => $clientEmail]);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Ошибка принятия заказа']);
@@ -268,6 +244,7 @@ function handleAccept($conn) {
     $stmt->close();
 }
 
+// Функция обработки завершения заказа
 function handleComplete($conn) {
     $id = $_POST['id'] ?? null;
 
@@ -282,6 +259,21 @@ function handleComplete($conn) {
         exit();
     }
 
+    // Получение деталей заказа для чека
+    $orderDetails = getOrderDetails($conn, $id);
+    if (!$orderDetails) {
+        echo json_encode(['status' => 'error', 'message' => 'Не удалось получить данные заказа']);
+        exit();
+    }
+
+    // Получаем связанные услуги из CarWashServicesQueue
+    $services = getServicesForOrder($conn, $id);
+    if (!$services) {
+        echo json_encode(['status' => 'error', 'message' => 'Не удалось получить услуги для заказа']);
+        exit();
+    }
+
+    // Сохраняем заказ в историю
     $sql = "INSERT INTO CarHistory (NumberCar, CarBrand, CarModel, CarColor, ClientsID, AcceptanceDate, Services, Price) 
             SELECT NumberCar, CarBrand, CarModel, CarColor, ClientsID, AcceptanceDate, Services, Price 
             FROM CarQueue WHERE ID = ?";
@@ -289,12 +281,18 @@ function handleComplete($conn) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
+        // Удаляем заказ из очереди
         $deleteSql = "DELETE FROM CarQueue WHERE ID = ?";
         $deleteStmt = $conn->prepare($deleteSql);
         $deleteStmt->bind_param("i", $id);
         $deleteStmt->execute();
 
-        sendEmail($clientEmail, 'Заказ завершен', 'Ваш заказ выполнен.');
+        // Отправляем email с уведомлением
+        sendEmail($clientEmail, 'Заказ завершен', 'Ваш заказ выполнен. Спасибо, что воспользовались нашими услугами.');
+
+        // Отправляем чек на оплату
+        sendInvoiceEmail($clientEmail, $orderDetails, $services);
+
         echo json_encode(['status' => 'success', 'email' => $clientEmail]);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Ошибка завершения заказа']);
@@ -302,7 +300,45 @@ function handleComplete($conn) {
     $stmt->close();
 }
 
+// Функция для получения услуг, связанных с заказом
+function getServicesForOrder($conn, $orderId) {
+    $sql = "SELECT * FROM CarWashServicesQueue WHERE ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $orderId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $services = [];
+    while ($row = $result->fetch_assoc()) {
+        $services[] = $row;
+    }
+
+    return $services;
+}
+
+
+// Получение деталей заказа по ID
+function getOrderDetails($conn, $id) {
+    $sql = "SELECT NumberCar, CarBrand, CarModel, CarColor, Services, Price, AcceptanceDate, ExecutionTime 
+            FROM CarQueue WHERE ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row;
+    }
+    
+    // Debugging output
+    error_log('No order details found for ID: ' . $id);
+    return null;
+}
+
+
+
 function getClientEmail($conn, $id) {
+    // Получаем ClientsID из CarQueue
     $sqlClientEmail = "SELECT ClientsID FROM CarQueue WHERE ID = ?";
     $stmtClientEmail = $conn->prepare($sqlClientEmail);
     $stmtClientEmail->bind_param("i", $id);
@@ -312,6 +348,9 @@ function getClientEmail($conn, $id) {
     if ($row = $result->fetch_assoc()) {
         $clientsID = $row['ClientsID'];
 
+        // Логирование ClientsID
+
+        // Получаем email клиента из таблицы Clients
         $sqlEmail = "SELECT Email FROM Clients WHERE ID = ?";
         $stmtEmail = $conn->prepare($sqlEmail);
         $stmtEmail->bind_param("i", $clientsID);
@@ -319,12 +358,68 @@ function getClientEmail($conn, $id) {
         $emailResult = $stmtEmail->get_result();
 
         if ($emailRow = $emailResult->fetch_assoc()) {
+            // Логируем найденный email
             return $emailRow['Email'];
+        } else {
+            // Если email не найден
         }
+    } else {
+
     }
 
     return null;
 }
+
+
+
+function sendInvoiceEmail($to, $orderDetails, $services) {
+    if (empty($orderDetails)) {
+        error_log('Order details are empty!');
+        return;
+    }
+
+    $subject = 'Ваш чек на оплату заказа';
+    $body = "
+    <html>
+    <body style='font-family: Arial, sans-serif; color: #333;'>
+        <table cellpadding='10' cellspacing='0' width='100%' style='max-width: 600px; margin: auto; background-color: #f9f9f9; border-radius: 8px;'>
+            <tr>
+                <td style='background-color: #FF9800; color: #fff; text-align: center; border-radius: 8px 8px 0 0;'>
+                    <h2>Чек на оплату</h2>
+                </td>
+            </tr>
+            <tr>
+                <td style='padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px;'>
+                    <h3>Детали вашего заказа</h3>
+                    <p><strong>Номер машины:</strong> " . ($orderDetails['NumberCar'] ?? 'N/A') . "</p>
+                    <p><strong>Марка:</strong> " . ($orderDetails['CarBrand'] ?? 'N/A') . "</p>
+                    <p><strong>Модель:</strong> " . ($orderDetails['CarModel'] ?? 'N/A') . "</p>
+                    <p><strong>Цвет:</strong> " . ($orderDetails['CarColor'] ?? 'N/A') . "</p>
+                    <p><strong>Услуги:</strong></p>
+                    <ul>";
+
+    foreach ($services as $service) {
+        $body .= "<li><strong>Услуга:</strong> " . ($service['ServicesName'] ?? 'N/A') . " - " . ($service['Price'] ?? 'N/A') . " руб.</li>";
+    }
+
+    $body .= "</ul>
+                    <p><strong>Дата принятия:</strong> " . ($orderDetails['AcceptanceDate'] ?? 'N/A') . "</p>
+                    <p><strong>Время выполнения:</strong> " . ($orderDetails['ExecutionTime'] ?? 'N/A') . "</p>
+                    <p><strong>Цена:</strong> " . ($orderDetails['Price'] ?? 'N/A') . " руб.</p>
+                    <p><strong>Статус:</strong> Завершен</p>
+                    <br>
+                    <p>Спасибо за использование наших услуг!</p>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>";
+
+    sendEmail($to, $subject, $body);
+}
+
+
+
 
 $conn->close();
 ?>

@@ -10,6 +10,10 @@ const CarQueue = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
+
+  const [isAccepting, setIsAccepting] = useState(false); // Для принятия заказа
+  const [isCompleting, setIsCompleting] = useState(false); // Для завершения заказа
+
     
   const [search, setSearch] = useState('');
     
@@ -94,6 +98,7 @@ const CarQueue = () => {
   }, [page]);
 
   const handleAcceptOrder = async (id) => {
+    setIsAccepting(true); // Устанавливаем флаг выполнения
     try {
         const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
             method: 'POST',
@@ -108,10 +113,13 @@ const CarQueue = () => {
         }
     } catch (error) {
         console.error('Ошибка принятия заказа:', error);
+    } finally {
+        setIsAccepting(false); // Сбрасываем флаг после выполнения
     }
 };
 
 const handleCompleteOrder = async (id) => {
+    setIsCompleting(true); // Устанавливаем флаг выполнения
     try {
         const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
             method: 'POST',
@@ -120,14 +128,18 @@ const handleCompleteOrder = async (id) => {
         });
         const result = await response.json();
         if (result.status === 'success') {
+            setPage(1);
             fetchData();
         } else {
             alert(`Ошибка: ${result.message}`);
         }
     } catch (error) {
         console.error('Ошибка завершения заказа:', error);
+    } finally {
+        setIsCompleting(false); // Сбрасываем флаг после выполнения
     }
 };
+
 
   const fetchServicesForClient = async (clientID) => {
     try {
@@ -204,9 +216,21 @@ const handleCompleteOrder = async (id) => {
                 <td>{item.Price}</td>
                 <td>
                   {item.status === 'pending' ? (
-                    <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={() => handleAcceptOrder(item.ID)}>Принять заказ</button>
+                    <button
+                      style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                      onClick={() => handleAcceptOrder(item.ID)}
+                      disabled={isAccepting}
+                    >
+                      {isAccepting ? 'Принятие...' : 'Принять заказ'}
+                    </button>
                   ) : item.status === 'accepted' ? (
-                    <button style={{ backgroundColor: '#FF9800', color: 'white' }} onClick={() => handleCompleteOrder(item.ID)}>Завершить</button>
+                    <button
+                      style={{ backgroundColor: '#FF9800', color: 'white' }}
+                      onClick={() => handleCompleteOrder(item.ID)}
+                      disabled={isCompleting}
+                    >
+                      {isCompleting ? 'Завершение...' : 'Завершить'}
+                    </button>
                   ) : (
                     'Завершено'
                   )}

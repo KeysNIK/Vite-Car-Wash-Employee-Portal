@@ -21,6 +21,9 @@ const CarQueue = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
     
   const [editUser, setEditUser] = useState(null);
   const [newUser, setNewUser] = useState({
@@ -56,27 +59,28 @@ const CarQueue = () => {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      const limit = 15;
-      const response = await fetch(
-        `http://a1057091.xsph.ru/CarQueue.php?page=${page}&limit=${limit}&search=${search}`
-      );
-      const result = await response.json();
-   
-      if (result.data.length > 0) {
-        setData(result.data);
-        setTotalPages(result.total_pages);
-        setNoResults(false);
-      } else {
-        setData([]);
-        setTotalPages(1);
-        setNoResults(true);
-      }
+        const limit = 15;
+        const response = await fetch(
+            `http://a1057091.xsph.ru/CarQueue.php?page=${page}&limit=${limit}&search=${search}`
+        );
+        const result = await response.json();
+        
+        if (result.data.length > 0) {
+            setData(result.data);
+            setTotalPages(result.total_pages);
+            setNoResults(false);
+        } else {
+            setData([]);
+            setTotalPages(1);
+            setNoResults(true);
+        }
     } catch (error) {
-      console.error("Ошибка загрузки данных:", error);
+        console.error("Ошибка загрузки данных:", error);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
+
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -263,41 +267,51 @@ const CarQueue = () => {
     fetchData();
   }, [page]);
 
-  const handleAcceptOrder = async (id) => {
-    try {
-        const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ action: 'accept', id }),
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-            fetchData();
-        } else {
-            alert(`Ошибка: ${result.message}`);
-        }
-    } catch (error) {
-        console.error('Ошибка принятия заказа:', error);
-    }
+// Usage in `handleAcceptOrder`
+const handleAcceptOrder = async (id) => {
+  setIsAccepting(true); // Устанавливаем флаг выполнения
+  try {
+      const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ action: 'accept', id }),
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+          fetchData();
+      } else {
+          alert(`Ошибка: ${result.message}`);
+      }
+  } catch (error) {
+      console.error('Ошибка принятия заказа:', error);
+  } finally {
+      setIsAccepting(false); // Сбрасываем флаг после выполнения
+  }
 };
 
 const handleCompleteOrder = async (id) => {
-    try {
-        const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ action: 'complete', id }),
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-            fetchData();
-        } else {
-            alert(`Ошибка: ${result.message}`);
-        }
-    } catch (error) {
-        console.error('Ошибка завершения заказа:', error);
-    }
+  setIsCompleting(true); // Устанавливаем флаг выполнения
+  try {
+      const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ action: 'complete', id }),
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+          setPage(1);
+          fetchData();
+      } else {
+          alert(`Ошибка: ${result.message}`);
+      }
+  } catch (error) {
+      console.error('Ошибка завершения заказа:', error);
+  } finally {
+      setIsCompleting(false); // Сбрасываем флаг после выполнения
+  }
 };
+
+
 
 const fetchServicesForClient = async (clientID) => {
   try {
@@ -392,13 +406,26 @@ const fetchServicesForClient = async (clientID) => {
                 </td>
                 <td>
                   {item.status === 'pending' ? (
-                    <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={() => handleAcceptOrder(item.ID)}>Принять заказ</button>
+                    <button
+                      style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                      onClick={() => handleAcceptOrder(item.ID)}
+                      disabled={isAccepting}
+                    >
+                      {isAccepting ? 'Принятие...' : 'Принять заказ'}
+                    </button>
                   ) : item.status === 'accepted' ? (
-                    <button style={{ backgroundColor: '#FF9800', color: 'white' }} onClick={() => handleCompleteOrder(item.ID)}>Завершить</button>
+                    <button
+                      style={{ backgroundColor: '#FF9800', color: 'white' }}
+                      onClick={() => handleCompleteOrder(item.ID)}
+                      disabled={isCompleting}
+                    >
+                      {isCompleting ? 'Завершение...' : 'Завершить'}
+                    </button>
                   ) : (
                     'Завершено'
                   )}
                 </td>
+
               </tr>
             ))}
           </tbody>
