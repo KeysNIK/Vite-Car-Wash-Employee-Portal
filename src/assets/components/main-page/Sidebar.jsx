@@ -18,7 +18,7 @@ const Sidebar = ({ isMenuOpen, setContent }) => {
     <div className={`${styles.sideMenu} ${isMenuOpen ? styles.open : ''}`}>
       <h1>Алгоритм Чистоты</h1>
       
-      <button onClick={() => setContent('Block2')}>Прием заказа</button>
+      <button onClick={() => setContent('Add')}>Прием заказа</button>
       <button onClick={() => setContent('CarQueueView')}>Очередь</button>
       <button onClick={() => setContent('CarHistoryView')}>История</button>
 

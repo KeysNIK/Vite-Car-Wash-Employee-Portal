@@ -1,0 +1,147 @@
+  /* Add.module.css */
+.container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    color: #303030;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
+  .formContainer {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0; /* Начальная непрозрачность для анимации */
+    animation: fadeIn 0.5s forwards; /* Анимация появления */
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000;
+  }  
+  
+  .input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .submitButton {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .submitButton:disabled {
+    background-color: #c0c0c0;
+  }
+  
+  .submitButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Стили для модального окна */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .closeModalButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+  
+  .closeModalButton:hover {
+    background-color: #0056b3;
+  }
+  
+  .serviceButton {
+    padding: 10px 20px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .serviceButton:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .serviceButton.selected {
+    background-color: #4caf50; /* Зеленый цвет для выбранной услуги */
+    color: white; /* Белый текст */
+    transform: scale(1.05); /* Легкое увеличение кнопки для акцента */
+  }
+  
+  .serviceButton.notSelected {
+    background-color: #f1f1f1; /* Светлый фон для невыбранной */
+    color: #333; /* Темный текст */
+  }
+  

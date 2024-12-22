@@ -204,9 +204,9 @@ const handleCompleteOrder = async (id) => {
                 <td>{item.Price}</td>
                 <td>
                   {item.status === 'pending' ? (
-                    <button onClick={() => handleAcceptOrder(item.ID)}>Принять заказ</button>
+                    <button style={{ backgroundColor: '#4CAF50', color: 'white' }} onClick={() => handleAcceptOrder(item.ID)}>Принять заказ</button>
                   ) : item.status === 'accepted' ? (
-                    <button onClick={() => handleCompleteOrder(item.ID)}>Завершить</button>
+                    <button style={{ backgroundColor: '#FF9800', color: 'white' }} onClick={() => handleCompleteOrder(item.ID)}>Завершить</button>
                   ) : (
                     'Завершено'
                   )}

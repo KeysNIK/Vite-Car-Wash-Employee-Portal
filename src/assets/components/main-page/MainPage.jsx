@@ -7,6 +7,7 @@ import CarHistory from '../view/CarHistory/CarHistory.jsx';
 import CarHistoryView from '../view/CarHistory/CarHistoryView.jsx';
 import CarQueue from '../view/CarQueue/CarQueue.jsx';
 import CarQueueView from '../view/CarQueue/CarQueueView.jsx';
+import Add from '../view/Add.jsx';
 import Block2 from '../Block2';
 import styles from './MainPage.module.css';
 
@@ -51,8 +52,8 @@ const MainPage = () => {
       return <CarQueue />
     } else if (activeContent === 'CarQueueView') {
       return <CarQueueView />
-    } else if (activeContent === '-') {
-
+    } else if (activeContent === 'Add') {
+      return <Add />
     } else if (activeContent === 'Block2') {
       return <Block2 />; 
     } else {
