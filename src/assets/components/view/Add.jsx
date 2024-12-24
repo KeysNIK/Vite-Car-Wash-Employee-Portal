@@ -204,6 +204,16 @@ const NewOrder = () => {
               onChange={handleClientChange}
               required
             />
+            <h3>Почта клиента</h3>
+            <input
+              className={styles.input}
+              type="text"
+              name="email"
+              placeholder="Почта клиента"
+              value={newUser.email}
+              onChange={handleClientChange}
+              required
+            />
             <h3>Количество визитов</h3>
             <input
               className={styles.input}

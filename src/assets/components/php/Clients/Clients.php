@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $countVisits = $_POST['countVisits'] ?? null;
         $clientDiscount = $_POST['clientDiscount'] ?? null;
 
-        if (!$fio || !$email || !$countVisits || !$clientDiscount) {
+        if (!$fio || !$email) {
             echo json_encode(['status' => 'error', 'message' => 'Некоторые поля не указаны']);
             exit();
         }
@@ -64,11 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssiii", $fio, $email, $countVisits, $clientDiscount, $id);
 
-        if ($stmt->execute()) {
+        if ($stmt->execute() && $stmt->affected_rows > 0) {
             echo json_encode(['status' => 'success']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Произошла ошибка при редактировании']);
-        }
+            echo json_encode(['status' => 'error', 'message' => 'Обновление не выполнено']);
+        }        
+
         $stmt->close();
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {

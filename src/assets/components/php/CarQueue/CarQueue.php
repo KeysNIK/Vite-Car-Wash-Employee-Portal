@@ -74,9 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
     
-            $sql = "UPDATE CarQueue SET NumberCar=?, CarBrand=?, CarModel=?, CarColor=?, ClientsID=?, AcceptanceDate=?, Services=?, Price=?, ExecutionTime=? status=? WHERE ID=?";
+            $sql = "UPDATE CarQueue SET NumberCar=?, CarBrand=?, CarModel=?, CarColor=?, ClientsID=?, AcceptanceDate=?, Services=?, Price=?, ExecutionTime=? WHERE ID=?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssisidisi", $numberCar, $carBrand, $carModel, $carColor, $clientsID, $acceptanceDate, $services, $price, $executionTime, $status, $id);
+            $stmt->bind_param("ssssisidii", $numberCar, $carBrand, $carModel, $carColor, $clientsID, $acceptanceDate, $services, $price, $executionTime, $id);
     
             if ($stmt->execute()) {
                 echo json_encode(['status' => 'success']);

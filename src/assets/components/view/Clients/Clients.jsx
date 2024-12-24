@@ -144,7 +144,7 @@ const Clients = () => {
 
     console.log({
         action: 'edit',
-        id: editUser.ID,
+        id: editUser.id,
         fio: editUser.fio,
         email: editUser.email,
         countVisits: editUser.countVisits,
@@ -160,7 +160,7 @@ const Clients = () => {
             },
             body: new URLSearchParams({
                 action: 'edit',
-                id: editUser.ID,
+                id: editUser.id,
                 fio: editUser.fio,
                 email: editUser.email,
                 countVisits: editUser.countVisits,
