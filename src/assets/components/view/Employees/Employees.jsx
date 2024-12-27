@@ -51,7 +51,7 @@ const Employees = () => {
     try {
       const limit = 15;
       const response = await fetch(
-        `http://a1057091.xsph.ru/Employees.php?page=${page}&limit=${limit}&search=${search}`
+        `http://f1069235.xsph.ru/Employees.php?page=${page}&limit=${limit}&search=${search}`
       );
       const result = await response.json();
 
@@ -81,7 +81,7 @@ const Employees = () => {
     if (userToDelete) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`http://a1057091.xsph.ru/Employees.php?id=${userToDelete.ID}`, {
+        const response = await fetch(`http://f1069235.xsph.ru/Employees.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
 
@@ -109,7 +109,7 @@ const Employees = () => {
     }
 
     try {
-      const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
+      const response = await fetch('http://f1069235.xsph.ru/Employees.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -157,7 +157,7 @@ const Employees = () => {
     }
 
     try {
-      const response = await fetch('http://a1057091.xsph.ru/Employees.php', {
+      const response = await fetch('http://f1069235.xsph.ru/Employees.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

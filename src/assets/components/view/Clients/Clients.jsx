@@ -48,7 +48,7 @@ const Clients = () => {
     try {
       const limit = 15;
       const response = await fetch(
-        `http://a1057091.xsph.ru/Clients.php?page=${page}&limit=${limit}&search=${search}`
+        `http://f1069235.xsph.ru/Clients.php?page=${page}&limit=${limit}&search=${search}`
       );
       const result = await response.json();
    
@@ -78,7 +78,7 @@ const Clients = () => {
     if (userToDelete) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`http://a1057091.xsph.ru/Clients.php?id=${userToDelete.ID}`, {
+        const response = await fetch(`http://f1069235.xsph.ru/Clients.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
     
@@ -102,7 +102,7 @@ const Clients = () => {
     setIsAdding(true);
    
     try {
-      const response = await fetch('http://a1057091.xsph.ru/Clients.php', {
+      const response = await fetch('http://f1069235.xsph.ru/Clients.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -153,7 +153,7 @@ const Clients = () => {
       
 
     try {
-        const response = await fetch('http://a1057091.xsph.ru/Clients.php', {
+        const response = await fetch('http://f1069235.xsph.ru/Clients.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

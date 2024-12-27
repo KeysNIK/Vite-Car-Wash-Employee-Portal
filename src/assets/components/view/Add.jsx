@@ -35,7 +35,7 @@ const NewOrder = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await fetch('http://a1057091.xsph.ru/CarWash.php');
+      const response = await fetch('http://f1069235.xsph.ru/CarWash.php');
       const data = await response.json();
   
       if (data.status === 'success') {
@@ -95,7 +95,7 @@ const NewOrder = () => {
     setIsAdding(true);
 
     try {
-      const response = await fetch('http://a1057091.xsph.ru/Clients.php', {
+      const response = await fetch('http://f1069235.xsph.ru/Clients.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -136,7 +136,7 @@ const NewOrder = () => {
     const { totalPrice, totalExecutionTime } = calculateTotals();
   
     try {
-      const response = await fetch('http://a1057091.xsph.ru/AddOrderWithServices.php', {
+      const response = await fetch('http://f1069235.xsph.ru/AddOrderWithServices.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

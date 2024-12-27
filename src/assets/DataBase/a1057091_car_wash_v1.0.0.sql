@@ -7,6 +7,8 @@
 -- Версия сервера: 8.0.37-29
 -- Версия PHP: 7.2.34
 
+USE f1069235_car_wash;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";

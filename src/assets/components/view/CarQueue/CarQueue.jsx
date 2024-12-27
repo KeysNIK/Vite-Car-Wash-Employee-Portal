@@ -61,7 +61,7 @@ const CarQueue = () => {
     try {
         const limit = 15;
         const response = await fetch(
-            `http://a1057091.xsph.ru/CarQueue.php?page=${page}&limit=${limit}&search=${search}`
+            `http://f1069235.xsph.ru/CarQueue.php?page=${page}&limit=${limit}&search=${search}`
         );
         const result = await response.json();
         
@@ -92,7 +92,7 @@ const CarQueue = () => {
     if (userToDelete) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`http://a1057091.xsph.ru/CarQueue.php?id=${userToDelete.ID}`, {
+        const response = await fetch(`http://f1069235.xsph.ru/CarQueue.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
     
@@ -116,7 +116,7 @@ const CarQueue = () => {
     setIsAdding(true);
    
     try {
-      const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
+      const response = await fetch('http://f1069235.xsph.ru/CarQueue.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -168,7 +168,7 @@ const CarQueue = () => {
     
 
     try {
-      const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
+      const response = await fetch('http://f1069235.xsph.ru/CarQueue.php', {
         method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -271,7 +271,7 @@ const CarQueue = () => {
 const handleAcceptOrder = async (id) => {
   setIsAccepting(true); // Устанавливаем флаг выполнения
   try {
-      const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
+      const response = await fetch('http://f1069235.xsph.ru/CarQueue.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ action: 'accept', id }),
@@ -292,7 +292,7 @@ const handleAcceptOrder = async (id) => {
 const handleCompleteOrder = async (id) => {
   setIsCompleting(true); // Устанавливаем флаг выполнения
   try {
-      const response = await fetch('http://a1057091.xsph.ru/CarQueue.php', {
+      const response = await fetch('http://f1069235.xsph.ru/CarQueue.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ action: 'complete', id }),
@@ -315,7 +315,7 @@ const handleCompleteOrder = async (id) => {
 
 const fetchServicesForClient = async (clientID) => {
   try {
-    const response = await fetch(`http://a1057091.xsph.ru/CarWashServicesQueue.php?ID=${clientID}`);
+    const response = await fetch(`http://f1069235.xsph.ru/CarWashServicesQueue.php?ID=${clientID}`);
     const result = await response.json();
     
     if (result.data) {

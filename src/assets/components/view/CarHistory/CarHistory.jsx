@@ -52,7 +52,7 @@ const CarHistory = () => {
     try {
       const limit = 15;
       const response = await fetch(
-        `http://a1057091.xsph.ru/CarHistory.php?page=${page}&limit=${limit}&search=${search}`
+        `http://f1069235.xsph.ru/CarHistory.php?page=${page}&limit=${limit}&search=${search}`
       );
       const result = await response.json();
    
@@ -82,7 +82,7 @@ const CarHistory = () => {
     if (userToDelete) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`http://a1057091.xsph.ru/CarHistory.php?id=${userToDelete.ID}`, {
+        const response = await fetch(`http://f1069235.xsph.ru/CarHistory.php?id=${userToDelete.ID}`, {
           method: 'DELETE',
         });
     
@@ -106,7 +106,7 @@ const CarHistory = () => {
     setIsAdding(true);
    
     try {
-      const response = await fetch('http://a1057091.xsph.ru/CarHistory.php', {
+      const response = await fetch('http://f1069235.xsph.ru/CarHistory.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -156,7 +156,7 @@ const CarHistory = () => {
     
 
     try {
-      const response = await fetch('http://a1057091.xsph.ru/CarHistory.php', {
+      const response = await fetch('http://f1069235.xsph.ru/CarHistory.php', {
         method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

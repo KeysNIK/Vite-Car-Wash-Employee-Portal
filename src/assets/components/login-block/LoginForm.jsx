@@ -45,7 +45,7 @@ function LoginForm({ onLoginSuccess }) {
   const handleSubmitPassword = (e) => {
     e.preventDefault();
   
-    fetch('http://a1057091.xsph.ru/login.php', {
+    fetch('http://f1069235.xsph.ru/login.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
